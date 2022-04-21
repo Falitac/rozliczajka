@@ -76,7 +76,6 @@ h2 {
   --border-bigger-size: calc(var(--border-size) * 3);
   border-radius: var(--border-size) var(--border-size) var(--border-size) var(--border-size);
   background-color: #3e7eb3;
-  width: 100%;
   padding: 2em 3em 3em 3em;
 }
 
@@ -110,6 +109,16 @@ input[type=text]:focus, input[type=password]:focus, input[type=date]:focus, inpu
 }
 input[type=text]::placeholder, input[type=password]::placeholder, input[type=number]::placeholder {
   color: #888888;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
 select {

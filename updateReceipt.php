@@ -30,7 +30,7 @@ function updateReceipt() {
     $itemData = explode(';', $_GET['newItem']);
     $newItem = new Item($itemData[0], $itemData[1]);
 
-    $newItem->addEveryoneFromReceipt($newReceipt);
+    //$newItem->addEveryoneFromReceipt($newReceipt);
 
     $newReceipt->addItem($newItem);
   }

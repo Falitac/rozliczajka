@@ -133,7 +133,6 @@ function updateItemTable() {
   for(let i = receipt.itemList.length - 1; i >= 0; i--) {
     let item = receipt.itemList[i];
     let newRow = tableItemList.insertRow(1);
-    console.log(item);
 
     newRow.insertCell().innerHTML = item.name;
     newRow.insertCell().innerHTML = convertToPLN(new Number(item.price));
@@ -147,11 +146,13 @@ function updateItemTable() {
       checkbox.dataset.itemID = i;
       checkbox.dataset.payerID = receipt.personList[j];
 
-      console.log(receipt.personList[j]);
-      console.log(item.payers);
+      console.log(`person: ${receipt.personList[j]}`);
+      console.log(`item payers: ${item.payers}`);
+
 
       checkbox.checked = item.payers.includes(receipt.personList[j]);
-      console.log(`checkbox state ${checkbox.checked}`);
+      console.log(`includes? ${item.payers.includes(receipt.personList[j])}`);
+      //console.log(`checkbox state ${checkbox.checked}`);
 
       checkbox.setAttribute('onchange', `checkboxHandler(this);`);
       checkboxes.appendChild(checkbox);
@@ -191,7 +192,7 @@ function checkboxHandler(checkbox) {
   if(checkbox.checked) {
     console.log("set checkbox payerl");
     updateReceipt("setItemPayer", operationData);
-    return
+    return;
   }
   updateReceipt("unsetItemPayer", operationData);
 }
