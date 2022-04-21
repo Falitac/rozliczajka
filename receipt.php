@@ -12,7 +12,6 @@ class Receipt {
   public $userNames;
   public $shares;
 
-
   public function __construct() {
     $this->payerID = NULL;
     $this->date = date('d/m/Y');
@@ -21,7 +20,6 @@ class Receipt {
     $this->personList = array();
     $this->userNames = array();
     $this->share = $this->price;
-
   }
 
   public function calculateShares() {
@@ -53,9 +51,10 @@ class Receipt {
       $personalExtras = $personalItemsSum[$this->personList[$i]] ?? 0;
       $result[$this->personList[$i]] = $share + $personalExtras;
     }
-    //echo "Problem reszty: ";
-    //print_r($this->price - array_sum($result));
-    //echo "\n";
+
+    $rest = $this->price - array_sum($result);
+    $result[$this->payerID] += $rest;
+
     $this->shares = $result;
     return $result;
   }
@@ -65,7 +64,7 @@ class Receipt {
       return;
     }
     $this->userNames[$account->getId()] = $account->getName();
-    $this->personList[] = $account->getId();
+    $this->personList[] = intval($account->getId());
   }
 
   public function addPayer($account) {
@@ -76,7 +75,7 @@ class Receipt {
   public function setPayerByID($id) {
     $id = intval($id);
     $index = array_search($id, $this->personList);
-    if($index !== false) {
+    if($index !== FALSE) {
       $this->payerID = $id;
     }
   }
@@ -99,6 +98,9 @@ class Receipt {
 
   public function removeUser($userID) {
     $index = array_search($userID, $this->personList);
+    if($index === FALSE) {
+      return;
+    }
     array_splice($this->personList, $index, 1);
     $this->removeUserItemsConnections($userID);
   }
@@ -112,7 +114,27 @@ class Receipt {
     }
   }
 
+  public function isDataValid() {
+    if($this->price < 0) {
+      return FALSE;
+    }
+    if(count($this->personList) <= 0) {
+      return FALSE;
+    }
+    if($this->payerID === NULL) {
+      return FALSE;
+    }
+    if($this->shares === NULL) {
+      return FALSE;
+    }
+    return TRUE;
+  }
+
   public function saveToDatabase() {
+    if(!$this->isDataValid()) {
+      return FALSE;
+    }
+
     global $pdo;
     try {
       $receiptID = $this->receiptQuery($pdo);
@@ -123,6 +145,7 @@ class Receipt {
     } catch(PDOException $e) {
       throw new Exception("Database query exception $e");
     }
+    return TRUE;
   }
 
   private function receiptQuery($pdo) {
@@ -191,7 +214,7 @@ class Item {
   public $price;
   public $payers;
 
-  public function __construct($name = "default", $price = 0) {
+  public function __construct($name = "Default", $price = 0) {
     $this->name = $name;
     $this->setPrice($price);
     $this->payers = array();
@@ -249,59 +272,5 @@ class Item {
     return intdiv($this->price , $personCount);
   }
 }
+
 ?>
-  <?php
-  /*
-    $test = new Receipt();
-    $account[] = new Account("Filek");
-    $account[] = new Account("Wojtek");
-    $account[] = new Account("Badyl");
-    $account[] = new Account("Szymek");
-
-    $test->setPayer($account[0]);
-    $test->addParticipant($account[1]);
-    $test->addParticipant($account[2]);
-    $test->addParticipant($account[3]);
-    $test->setPrice(6773);
-
-    $item[] = new Item("Wkłady", 1199);
-    $item[] = new Item("Dezodorant", 999);
-    $item[] = new Item("Nutella", 1199);
-    $item[] = new Item("Muller", 275);
-    $item[] = new Item("Pałeczki", 946);
-    $item[] = new Item("Ziemniaki", 513);
-    $item[] = new Item("Pietruszka", 190);
-    $item[] = new Item("Przyprawa", 598);
-
-    $item[0]->addParticipant($account[0]);
-
-    $item[1]->addParticipant($account[1]);
-
-    $item[2]->addParticipant($account[0]);
-    $item[3]->addParticipant($account[0]);
-
-    $item[4]->addParticipant($account[0]);
-    $item[4]->addParticipant($account[1]);
-    $item[4]->addParticipant($account[2]);
-
-    $item[5]->addParticipant($account[0]);
-    $item[5]->addParticipant($account[1]);
-    $item[5]->addParticipant($account[2]);
-
-    $item[6]->addParticipant($account[0]);
-    $item[6]->addParticipant($account[1]);
-    $item[6]->addParticipant($account[2]);
-
-    $item[7]->addParticipant($account[0]);
-    $item[7]->addParticipant($account[1]);
-    $item[7]->addParticipant($account[2]);
-
-    foreach($item as $i) {
-      $test->addItem($i);
-    }
-    //print_r($test);
-    //print_r($test->calculateShares());
-    $_SESSION['test'] = json_encode($test);
-    */
-    
-  ?>

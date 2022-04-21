@@ -106,7 +106,7 @@ class Account {
       $result->execute($values);
 
       $row = $result->fetch(PDO::FETCH_ASSOC);
-      $this->id = $row["id"];
+      $this->id = intval($row["id"]);
       $this->name = $row["name"];
     } catch(PDOException $e) {
       throw new Exception("Database query exception $e");
@@ -134,14 +134,6 @@ class Account {
     return $this;
   }
 
-}
-
-try {
-  //$a = new Account();
-  //$value = $a->addAccount("osoba3", "default123");
-  //print_r($value);
-} catch (Throwable $th) {
-  echo $th;
 }
 
 ?>
