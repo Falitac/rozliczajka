@@ -1,5 +1,6 @@
 <?php require_once('utility.php'); ?>
 
+<h2>Wszystkie długi:</h2>
 <table>
   <tr>
     <th>Osoba1</th>
@@ -13,7 +14,7 @@
   <tr>
     <td><?=$person1?></td>
     <td><?=$person2?></td>
-    <td><?=grosz2PLN($value)?></td>
+    <td class="td-money"><?=grosz2PLN($value)?></td>
   </tr>
   <?php
       }

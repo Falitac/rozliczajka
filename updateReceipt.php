@@ -23,7 +23,7 @@ function updateReceipt() {
   }
 
   if(isset($_GET['newDate'])) {
-    $newReceipt->date = date($_GET['newDate']);
+    $newReceipt->date = date_create($_GET['newDate']);
   }
 
   if(isset($_GET['newItem'])) {
@@ -74,7 +74,15 @@ function updateReceipt() {
   }
 
   if(isset($_GET['saveToDatabase'])) {
-    $newReceipt->saveToDatabase();
+    $savedSuccessfully = NULL;
+    try {
+      $savedSuccessfully = $newReceipt->saveToDatabase();
+    } catch (\Throwable $th) {
+      $_SESSION['receipt-error'] = "Could not save to database: $th";
+    }
+    if(!$savedSuccessfully) {
+      $_SESSION['receipt-error'] = "Could not save to database\n";
+    }
   }
 
   $newReceipt->calculateShares();

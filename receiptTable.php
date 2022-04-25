@@ -1,9 +1,11 @@
+<h2>Paragony obce</h2>
 <table>
   <tr>
-    <th>Data</th>
+    <th>Twoja należność</th>
     <th>Wartość</th>
     <th>Płatnik</th>
-    <th>Twoja należność</th>
+    <th>Data</th>
+    <th>Zapłacono?</th>
   </tr>
   <?php
     global $pdo;
@@ -25,15 +27,15 @@
       $dateFormat = date('d.m.Y', $dateFormat);
 
   ?>
-    <tr>
-      <td><?=$dateFormat;?></td>
-      <td><?=grosz2PLN($row['price']);?></td>
+    <tr data-receipt-id="<?=$row['id'];?>">
+      <td class="td-money"><?=grosz2PLN($row['value']);?></td>
+      <td class="td-money"><?=grosz2PLN($row['price']);?></td>
       <td><?=$row['name'];?></td>
-      <td><?=grosz2PLN($row['value']);?></td>
-      <td>
-        <input type="checkbox"
-        <?=$row['paid']?"checked":""?>
-        ></input>
+      <td><?=$dateFormat;?></td>
+      <td
+      class="<?=$row['paid']?"paid":"not-paid";?>"
+      onclick="onPaySwitchCellClick(this);"
+      >
       </td>
     </tr>
   <?php } ?>

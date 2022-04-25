@@ -38,28 +38,36 @@
       <div class="receipt-info">
         <div class="receipt-left-side">
           <form>
+            <div style="float: left;">
+              <label>
+                <h2>Kwota:</h2>
+              </label>
+              <input type="number" id="form-receipt-price" inputmode="decimal" value="<?=$newReceipt->getPrice()/100?>" oninput="onNumberChange(this);updateReceiptPrice(this)" onclick="this.select();"></input>
+            </div>
+            <div style="float: right;">
+              <label>
+                <h2>Data:</h2>
+              </label>
+              <input type="date" id="form-receipt-date" oninput="updateReceipt('newDate', this.value)"></input>
+            </div>
+            <div style="clear: both;"></div>
             <label>
-              <h2>Kwota:</h2>
+              <h2>Lista osób:</h2>
             </label>
-            <input type="number" id="form-receipt-price" inputmode="decimal" value="<?=$newReceipt->getPrice()/100?>" oninput="onNumberChange(this);updateReceiptPrice(this)" onclick="this.select();"></input>
-            <label>
-              <h2>Data:</h2>
-            </label>
-            <input type="date" id="form-receipt-date" oninput="updateReceipt('newDate', this.value)"></input>
-            <label><h2>Lista osób:</h2></label>
-              <table id="table-person-list">
-                <tr>
-                  <th>Nr</th>
-                  <th>Osoba</th>
-                  <th>Dług</th>
-                  <th>Akcja</th>
-                </tr>
-                <tr>
-                  <td colspan="4" style="padding: 0;">
-                    <input class="table-text-input" onkeydown="addPersonToList(this);" type="text" placeholder="Dodaj osobę" ></input>
-                  </td>
-                </tr>
-              </table>
+            <table id="table-person-list">
+              <tr>
+                <th>Nr</th>
+                <th>Osoba</th>
+                <th>Dług</th>
+                <th>Akcja</th>
+              </tr>
+              <tr>
+                <td colspan="4" style="padding: 0;">
+                  <input class="table-text-input" onkeydown="addPersonToList(this);" type="text" placeholder="Dodaj osobę" ></input>
+                </td>
+              </tr>
+            </table>
+            <textarea placeholder="Opis paragonu, przedmiotów, uwagi"></textarea>
           </form>
         </div>
         <div class="receipt-right-side">
@@ -73,12 +81,10 @@
             </tr>
             <tr>
               <td style="padding: 0; height: 3em;">
-                <input type="text" id="input-item-name" placeholder="Nazwa"
-                style="margin: 0; padding: 0 5%; border-radius: 0; text-align: left; height: 100%; width: 100%;"></input>
+                <input type="text" id="input-item-name" class="table-input" placeholder="Nazwa"></input>
               </td>
               <td style="padding: 0; height: 3em;">
-                <input type="number" placeholder="Cena" onkeydown="addItemToList(this);" oninput="onNumberChange(this);"
-                style="margin: 0; padding: 0 5%; border-radius: 0; text-align: left; height: 100%; width: 90%;"></input>
+                <input type="number"class="table-input" placeholder="Cena" onkeydown="addItemToList(this);" oninput="onNumberChange(this);"></input>
               </td>
             </tr>
           </table>

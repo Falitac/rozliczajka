@@ -53,6 +53,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link href="/css/main.css" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
   <title>Rozliczajka</title>
@@ -84,24 +85,31 @@
 
         </div>
       <?php } else { ?>
+        <?php
+          print_r($_SESSION);
+          if(isset($_SESSION['receipt-error'])) { ?>
+            <div style="color: red;">
+              <?=$_SESSION['receipt-error'];?>
+            </div>
+        <?php
+            unset($_SESSION['receipt-error']);
+          }
+        ?>
+
         <div class="user-info fancy-border">
           <h1>Cześć <?= $_SESSION['login-name']?>!</h1>
           <a href="./logout.php">Wyloguj</a><br>
           <a href="./addReceipt.php">Dodaj paragon</a>
-          <h2>Długi</h2>
           <?php require_once('debtTable.php');?>
-          <h2>Wszystkie długi:</h2>
           <?php require_once('allDebts.php');?>
         </div>
 
         <div class="receipt-list fancy-border" style="margin-top: 3vh;">
-          <h2>Ostatnie paragony</h2>
           <?php require_once('receiptTable.php');?>
         </div>
+        <script src="js/mainSiteHandler.js"></script>
       <?php } ?>
     </div>
   </main>
-  <script>
-  </script>
 </body>
 </html>

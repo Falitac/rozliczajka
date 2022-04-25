@@ -135,7 +135,9 @@ function updateItemTable() {
     let newRow = tableItemList.insertRow(1);
 
     newRow.insertCell().innerHTML = item.name;
-    newRow.insertCell().innerHTML = convertToPLN(new Number(item.price));
+    const priceCell = newRow.insertCell();
+    priceCell.innerHTML = convertToPLN(new Number(item.price));
+    priceCell.classList.toggle('td-money');
 
     console.log(`item name ${item.name}`);
     let checkboxes = newRow.insertCell();
