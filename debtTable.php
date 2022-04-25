@@ -1,3 +1,4 @@
+<h2>Długi:</h2>
 <table>
   <tr>
     <th>Osoba</th>

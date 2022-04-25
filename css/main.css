@@ -4,6 +4,10 @@
 /* font-family: 'Raleway', sans-serif; */
 @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
+/*
+ * Strictly main site
+*/
+
 * {
   margin: 0;
   padding: 0;
@@ -79,7 +83,12 @@ h2 {
   padding: 2em 3em 3em 3em;
 }
 
+/*
+ * Input formats
+*/
+
 input {
+  box-sizing: border-box;
   font-family: 'Raleway', sans-serif;
   color: #fff;
   display: flex;
@@ -97,8 +106,16 @@ input.round-input {
   border-radius: 1em;
 }
 
+input.table-input {
+  margin: 0;
+  padding: 0 5%;
+  border-radius: 0;
+  text-align: left;
+  height: 100%;
+}
+
 input[type=text], input[type=password], input[type=date], input[type=number]  {
-  width: calc(100% - 30px);
+  width: 100%;
 }
 
 input[type=text]:hover, input[type=password]:hover, input[type=date]:hover, input[type=number]:hover  {
@@ -119,6 +136,10 @@ input::-webkit-inner-spin-button {
 
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+input[type=checkbox] {
+  margin: 0;
 }
 
 select {
@@ -147,6 +168,7 @@ input[type=submit]:hover {
   background-color: #fff;
 }
 
+
 #submit-save-receipt {
   min-width: 100px;
   max-width: 200px;
@@ -165,11 +187,10 @@ input[type=date], #form-receipt-price {
   display: block;
 }
 
-.person-checkbox {
+input[type="checkbox"].person-checkbox {
   background-color: #000000;
-  margin: 0;
   float: right;
-  margin-right: 0.3em;
+  margin: 0.1em 0.1em;
   width: 1em;
   height: 1em;
 }
@@ -189,14 +210,33 @@ a:hover {
   text-decoration: underline;
 }
 
+/*
+ * Table format
+*/
+
 table {
+  border-collapse: collapse;
+  border: 2px #6b6b6b solid;
+}
+
+table#table-person-list {
+  width: 100%;
 }
 
 table td, table th{
-  padding: 0.5em 0.5em;
+  padding: 0.4em 0.8em;
+  text-align: center;
 }
 
-table tr td:first-child{
+table td {
+  border: 1px #b1b1b1 solid;
+}
+
+table td.td-money {
+  text-align: right;
+}
+
+table tr:first-child, td:first-child{
 }
 
 table tr:nth-child(odd) {
@@ -205,7 +245,6 @@ table tr:nth-child(odd) {
 
 table tr {
   background-color: #3b3b3b;
-  border: 1px #fff solid;
 }
 
 table tr:not(tr:first-child):hover{
@@ -213,7 +252,50 @@ table tr:not(tr:first-child):hover{
   cursor: pointer;
 }
 
+table tr td.paid {
+  background-color: #3b8b16;
+  transition: 0.5s all;
+}
+
+table tr td.paid::before {
+  content: 'Tak';
+}
+
+table tr td.not-paid {
+  background-color: #a0451b;
+  transition: 0.5s all;
+}
+
+table tr td.not-paid::before {
+  content: 'Nie';
+}
+
 .content .receipt-info {
   display: grid;
   grid-template-columns: auto auto;
+}
+
+div.receipt-left-side {
+  margin-right: 25%;
+}
+
+
+textarea {
+  box-sizing: border-box;
+  margin-top: 2vh;
+  width: 100%;
+  font-size: 1.0rem;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  letter-spacing: 1px;
+
+  padding: 10px;
+  max-width: 100%;
+  line-height: 1.5;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 2px #999;
+  resize: none;
+
+  background-color: #161616;
+  color: #eee;
 }

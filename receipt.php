@@ -8,14 +8,16 @@ class Receipt {
   public $price;
   public $itemList;
   public $personList;
+  public $description;
 
   public $userNames;
   public $shares;
 
   public function __construct() {
     $this->payerID = NULL;
-    $this->date = date('d/m/Y');
+    $this->date = new DateTime();
     $this->price = 0;
+    $this->description = '';
     $this->itemList = array();
     $this->personList = array();
     $this->userNames = array();
@@ -115,7 +117,7 @@ class Receipt {
   }
 
   public function isDataValid() {
-    if($this->price < 0) {
+    if($this->price <= 0) {
       return FALSE;
     }
     if(count($this->personList) <= 0) {
@@ -151,7 +153,7 @@ class Receipt {
   private function receiptQuery($pdo) {
     $query = "INSERT INTO receipts(date, price, payer_id) VALUES (:date, :price, :payer_id)";
 
-    $sqlDateFormat = date('Y-m-d', strtotime($this->date));
+    $sqlDateFormat = $this->date->format('Y-m-d');
 
     $values = array(
       'date' => $sqlDateFormat,

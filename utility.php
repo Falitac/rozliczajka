@@ -1,7 +1,7 @@
 <?php
 
 function grosz2PLN($balance) {
-  return sprintf("%.2fzł", $balance / 100);
+  return sprintf("%.2f zł", $balance / 100);
 }
 
 function extractUsernamesToArray() {
