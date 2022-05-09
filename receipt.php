@@ -13,6 +13,8 @@ class Receipt {
   public $userNames;
   public $shares;
 
+  public $errorInformer;
+
   public function __construct() {
     $this->payerID = NULL;
     $this->date = new DateTime();
@@ -22,11 +24,20 @@ class Receipt {
     $this->personList = array();
     $this->userNames = array();
     $this->share = $this->price;
+
+    $this->errorInformer = '';
   }
 
   public function calculateShares() {
+    $this->errorInformer = '';
+
+    if($this->price === 0) {
+      $this->errorInformer .= "Brak wartości paragonu\n";
+    }
+
     $personCount = count($this->personList);
     if($personCount === 0) {
+      $this->errorInformer .= "Brak osób w paragonie\n";
       return NULL;
     }
 
@@ -48,7 +59,8 @@ class Receipt {
       }
     }
 
-    $share = intdiv(($this->price - $itemSum), $personCount);
+    $priceItemDiff = $this->price - $itemSum;
+    $share = intdiv($priceItemDiff, $personCount);
     for($i = 0; $i < $personCount; $i++) {
       $personalExtras = $personalItemsSum[$this->personList[$i]] ?? 0;
       $result[$this->personList[$i]] = $share + $personalExtras;
@@ -64,6 +76,9 @@ class Receipt {
   public function addParticipant($account) {
     if(in_array($account->getId(), $this->personList)) {
       return;
+    }
+    if(count($this->personList) === 0) {
+      $this->payerID = $account->getId();
     }
     $this->userNames[$account->getId()] = $account->getName();
     $this->personList[] = intval($account->getId());
@@ -102,6 +117,9 @@ class Receipt {
     $index = array_search($userID, $this->personList);
     if($index === FALSE) {
       return;
+    }
+    if($this->personList[$index] === $this->payerID) {
+      $this->payerID = NULL;
     }
     array_splice($this->personList, $index, 1);
     $this->removeUserItemsConnections($userID);
@@ -151,7 +169,7 @@ class Receipt {
   }
 
   private function receiptQuery($pdo) {
-    $query = "INSERT INTO receipts(date, price, payer_id) VALUES (:date, :price, :payer_id)";
+    $query = "INSERT INTO receipts(date, price, payer_id, description) VALUES (:date, :price, :payer_id, :description)";
 
     $sqlDateFormat = $this->date->format('Y-m-d');
 
@@ -159,6 +177,7 @@ class Receipt {
       'date' => $sqlDateFormat,
       'price' => $this->price,
       'payer_id' => $this->payerID,
+      'description' => $this->description,
     );
     $result = $pdo->prepare($query);
     $result->execute($values);

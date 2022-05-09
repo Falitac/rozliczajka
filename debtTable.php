@@ -13,6 +13,8 @@
       INNER JOIN users
       ON users.id = receipts.payer_id
       WHERE user_id=:id AND payer_id<>:id
+      AND
+        payments.paid = 0
       GROUP BY users.name
     ;";
 

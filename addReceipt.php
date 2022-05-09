@@ -67,7 +67,8 @@
                 </td>
               </tr>
             </table>
-            <textarea placeholder="Opis paragonu, przedmiotów, uwagi"></textarea>
+            <textarea id="receipt-description" onchange="updateReceipt('setDescription', this.value)" placeholder="Opis paragonu, przedmiotów, uwagi"></textarea>
+            <div id="error-informer"></div>
           </form>
         </div>
         <div class="receipt-right-side">

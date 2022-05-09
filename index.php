@@ -2,7 +2,6 @@
   include_once('database.php');
   include_once('utility.php');
   session_start();
-  unset($_SESSION['new-receipt']);
   $login_error = NULL;
 
   function checkIfFilledLogin() {
@@ -97,7 +96,7 @@
         ?>
 
         <div class="user-info fancy-border">
-          <h1>Cześć <?= $_SESSION['login-name']?>!</h1>
+          <h1>Cześć <?= $_SESSION['login-name']?></h1>
           <a href="./logout.php">Wyloguj</a><br>
           <a href="./addReceipt.php">Dodaj paragon</a>
           <?php require_once('debtTable.php');?>
@@ -105,10 +104,19 @@
         </div>
 
         <div class="receipt-list fancy-border" style="margin-top: 3vh;">
-          <?php require_once('receiptTable.php');?>
+          <h1>Paragony</h1>
+          <div style="display: flex; justify-content: space-between;">
+            <div>
+              <?php require_once('receiptTable.php');?>
+            </div>
+            <div>
+              <?php require_once('userReceiptTable.php');?>
+            </div>
+          </div>
         </div>
         <script src="js/mainSiteHandler.js"></script>
       <?php } ?>
+      <script src="js/utility.js"></script>
     </div>
   </main>
 </body>
