@@ -35,6 +35,10 @@ function updateReceipt() {
     $newReceipt->addItem($newItem);
   }
 
+  if(isset($_GET['setDescription'])) {
+    $newReceipt->description = $_GET['setDescription'];
+  }
+
   if(isset($_GET['setReceiptPayer'])) {
     $id = $_GET['setReceiptPayer'];
     $newReceipt->setPayerByID($id);

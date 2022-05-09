@@ -24,7 +24,7 @@ new QRCode(document.getElementById("qrcode"), {
 */
 
 function convertToGrosz(value) {
-  return Math.ceil(value * 100)
+  return Math.round(value * 100);
 }
 
 function convertToPLN(value) {
@@ -46,13 +46,17 @@ function changePayer() {
 }
 
 function updateReceipt(attribute, value) {
-
   let httpRequest = new XMLHttpRequest();
+
   httpRequest.onreadystatechange = () => {
     if(httpRequest.readyState == 4 && httpRequest.status == 200) {
       const output = document.querySelector('pre');
       output.innerHTML = httpRequest.responseText;
 
+      if(attribute == 'saveToDatabase') {
+        console.log(httpRequest.responseText);
+        //window.location='./';
+      }
       downloadReceiptJSON();
     }
   }
@@ -112,8 +116,9 @@ function updatePersonTable() {
     let id = receipt.personList[i];
     let newRow = tablePersonList.insertRow(1);
 
-    newRow.insertCell().innerHTML = i + 1;
-    newRow.insertCell().innerHTML = receipt.userNames[id];
+    const firstCell = newRow.insertCell();
+    firstCell.innerHTML = i + 1;
+    newRow.insertCell().innerHTML = receipt.userNames[id] + (i === 0 ? ' (Płatnik)' : '');
     newRow.insertCell().innerHTML = convertToPLN(receipt.shares[id]);
 
     let deleteCell = newRow.insertCell();
@@ -170,7 +175,19 @@ function updateItemTable() {
 
 function updateInfoPrice() {
   const priceInput = document.querySelector('#form-receipt-price');
-  //priceInput.value = convertToPLN(receipt.price);
+
+  const serverReceiptPrice = convertToPLN(receipt.price);
+  //priceInput.value = serverReceiptPrice;
+}
+
+function updateDescription() {
+  const descriptionInput = document.querySelector('#receipt-description');
+  descriptionInput.innerHTML = receipt.description;
+}
+
+function updateErrorInformer() {
+  const errorInformer = document.querySelector('#error-informer');
+  errorInformer.innerHTML = receipt.errorInformer;
 }
 
 function downloadReceiptJSON() {
@@ -181,8 +198,10 @@ function downloadReceiptJSON() {
       console.log(receipt);
 
       updateInfoPrice();
+      updateDescription();
       updateItemTable();
       updatePersonTable();
+      updateErrorInformer();
     }
   }
   httpRequest.open("GET", `updateReceipt.php?getJSON=1`, true);
@@ -201,7 +220,6 @@ function checkboxHandler(checkbox) {
 
 function receiptSubmitToDatabase(input) {
   updateReceipt('saveToDatabase', '1');
-  window.location="./";
 }
 
 fillTodayDate();

@@ -34,7 +34,9 @@ function extractDebts() {
       INNER JOIN users AS payer
       ON payer.id=payments.user_id
       WHERE
-      payments.user_id <> receipts.payer_id
+        payments.user_id <> receipts.payer_id
+      AND
+        payments.paid = 0
       GROUP BY receipts.payer_id, payments.user_id
     ";
 
