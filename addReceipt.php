@@ -1,4 +1,5 @@
 <?php
+  session_start();
   require_once('checkIfLogged.php');
   require_once('database.php');
   require_once('utility.php');
@@ -14,7 +15,6 @@
   } else {
     $newReceipt = unserialize($_SESSION['new-receipt']);
   }
-
 
 ?>
 <!DOCTYPE html>
@@ -63,7 +63,9 @@
               </tr>
               <tr>
                 <td colspan="4" style="padding: 0;">
-                  <input class="table-text-input" onkeydown="addPersonToList(this);" type="text" placeholder="Dodaj osobę" ></input>
+                  <div class="autocomplete">
+                    <input class="table-text-input" onkeydown="addPersonToList(this);" type="text" placeholder="Dodaj osobę" autocomplete="off"></input>
+                  </div>
                 </td>
               </tr>
             </table>
@@ -98,7 +100,26 @@
       </pre>
     </div>
   </main>
-  <script src="js/addReceiptHandler.js">
+  <script src="js/addReceiptHandler.js"></script>
+  <script src="js/autocomplete.js"></script>
+  <script>
+    let tempUserTestList = [
+      "Sznapi",
+      "Wojti",
+      "Tomasz",
+      "Badyl",
+      "Konrad",
+      "Filek",
+      "Someone else",
+    ];
+    const input = document.querySelector('.table-text-input');
+    input.addEventListener('input', event => {
+      requestUserList(input.value).then((value) => {
+        let userList = JSON.parse(value);
+        console.log(userList);
+        autocomplete(input, userList);
+      });
+    });
   </script>
 </body>
 </html>
