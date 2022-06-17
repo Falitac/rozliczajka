@@ -355,3 +355,33 @@ div#error-informer {
   color: #f5ca53;
   white-space: pre-wrap;
 }
+
+/* Autocompleteness */
+.autocomplete {
+  position: relative;
+}
+
+.autocomplete-items {
+  position: absolute;
+  border: 1px solid #888;
+  z-index: 100;
+
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
+.autocomplete-items div {
+  text-align: left;
+  padding: 10px;
+  cursor: pointer;
+  background-color: #555;
+}
+
+.autocomplete-items div:hover {
+  background-color: #aaa;
+}
+
+.autocomplete-active {
+  background-color: #00aeff !important;
+}

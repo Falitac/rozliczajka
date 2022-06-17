@@ -186,13 +186,14 @@ class Receipt {
   }
 
   private function paymentsQuery($pdo, $receiptID) {
-    $query= "INSERT INTO payments(receipt_id, user_id, value) VALUES (:receipt_id, :user_id, :value)";
+    $query= "INSERT INTO payments(receipt_id, user_id, value, paid) VALUES (:receipt_id, :user_id, :value, :paid)";
 
     foreach($this->shares as $userID => $price) {
       $values = array(
         "receipt_id" => $receiptID,
         "user_id" => $userID,
-        "value" => $price
+        "value" => $price,
+        "paid" => $userID === $this->payerID
       );
       $result = $pdo->prepare($query);
       $result->execute($values);

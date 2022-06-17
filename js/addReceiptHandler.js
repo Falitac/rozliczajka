@@ -12,16 +12,6 @@ function fillTodayDate() {
   let today = new Date().toJSON().slice(0,10);
   formDate.value = today;
 }
-/*
-new QRCode(document.getElementById("qrcode"), {
-  text: "||nr_bank|kwota_gr|odbiorca|tytul|||",
-  width: 400,
-  height: 400,
-  colorDark : "#000",
-  colorLight : "#fff",
-  correctLevel : QRCode.CorrectLevel.M
-});
-*/
 
 function convertToGrosz(value) {
   return Math.round(value * 100);
@@ -40,9 +30,6 @@ function onNumberChange(input) {
 
 function updateReceiptPrice(input) {
   updateReceipt('newPrice', convertToGrosz(input.value));
-}
-
-function changePayer() {
 }
 
 function updateReceipt(attribute, value) {
@@ -75,7 +62,7 @@ function findUsers(name) {
       }
     }
   }
-  httpRequest.open("GET", `searchForPeople.php?name=${name}`, true);
+  httpRequest.open("GET", `searchUsers.php?name=${name}`, true);
   httpRequest.send();
 }
 
