@@ -1,6 +1,7 @@
 <?php
   include_once('database.php');
   include_once('utility.php');
+  include_once('receipt.php');
   session_start();
   $login_error = NULL;
 
@@ -114,6 +115,15 @@
             </div>
           </div>
         </div>
+        
+        <pre style="font-size:1.3em;">
+          <h2>Tutaj test</h2>
+        <?php
+          $testReceipt = new Receipt();
+          $testReceipt ->getFromDatabase(5);
+          print_r($testReceipt);
+        ?>
+        </pre>
         <script src="js/mainSiteHandler.js"></script>
       <?php } ?>
       <script src="js/utility.js"></script>
