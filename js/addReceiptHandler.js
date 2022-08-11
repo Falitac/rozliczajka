@@ -1,7 +1,6 @@
 let usersInReceipt = [];
 
 let receipt = null;
-let shares = [];
 
 if(receipt === null) {
   downloadReceiptJSON();

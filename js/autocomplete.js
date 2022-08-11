@@ -1,15 +1,16 @@
+var Autocomplete = {
 
-function autocomplete(input, itemList) {
-  let oldList = document.querySelector('.autocomplete > .autocomplete-items');
-  if(oldList && input.parentNode.contains(oldList)) {
-    oldList.remove();
-  }
-  
+registerInput: (input) => {
+  input.addEventListener('keydown', Autocomplete.keyboardElementSwitch, false);
+  return null;
+},
+
+autocomplete: (input, itemList) => {
+  Autocomplete.removeSuggestions(input);
+
   const autocompleteList = document.createElement('div');
   autocompleteList.classList.add('autocomplete-items');
   input.parentNode.appendChild(autocompleteList);
-
-  let chosenElement = null;
 
   for(let i = 0; i < itemList.length; i++) {
     let item = itemList[i];
@@ -18,34 +19,59 @@ function autocomplete(input, itemList) {
 
     autocompleteList.appendChild(divChild);
   }
-  //autocompleteList.childNodes[0].classList.add('autocomplete-active');
+},
 
+keyboardElementSwitch: event => {
+  const input = event.currentTarget;
+  const goUpKeys = [37, 38];
+  const goDownKeys = [39, 40];
+
+  const suggestionsDiv = input.parentNode.querySelector('.autocomplete-items');
+  if(suggestionsDiv === null || suggestionsDiv.childNodes === undefined)
+    return;
+
+  const suggestions = suggestionsDiv.childNodes;
+
+  let currentSelectedIndex = null;
+  for(let i = 0; i < suggestions.length; i++) {
+    const suggestion = suggestions[i];
+    if(suggestion.classList.contains('autocomplete-active')) {
+      currentSelectedIndex = i;
+      suggestion.classList.remove('autocomplete-active');
+    }
+  }
+
+  let nextIndex = 0;
+  if(currentSelectedIndex === null) {
+
+  }
+
+  if(goUpKeys.includes(event.keyCode)) {
+    if(currentSelectedIndex === null) {
+      nextIndex = suggestions.length - 1;
+    }
+    nextIndex = currentSelectedIndex === 0 ? suggestions.length - 1 : (currentSelectedIndex - 1);
+  }
+  if(goDownKeys.includes(event.keyCode)) {
+    if(currentSelectedIndex === null) {
+      nextIndex = -1;
+    }
+    nextIndex = (currentSelectedIndex + 1) % suggestions.length;
+  }
+
+  suggestions[nextIndex].classList.add('autocomplete-active');
+  input.value = suggestions[nextIndex].innerHTML;
+
+  if(event.keyCode == 13) {
+    Autocomplete.removeSuggestions(input);
+  }
+},
+
+removeSuggestions: (input) => {
+  let oldList = input.parentNode.querySelector('.autocomplete-items');
+  if(oldList && input.parentNode.contains(oldList)) {
+    oldList.remove();
+  }
 }
 
-async function requestUserList(name) {
-  return await makeAjaxUserQuery(name);
-}
-
-function makeAjaxUserQuery(name) {
-  return new Promise((resolve, reject) => {
-    let xhr = new XMLHttpRequest();
-    xhr.open("GET", `searchUsers.php?name=${name}`, true);
-    xhr.onload = () => {
-      if(xhr.status >= 200 && xhr.status < 300) {
-        resolve(xhr.response);
-      } else {
-        reject({
-          status: xhr.status,
-          statusText: xhr.statusText
-        });
-      }
-    };
-    xhr.onerror = () => {
-      reject({
-        status: xhr.status,
-        statusText: xhr.statusText
-      });
-    };
-    xhr.send();
-  });
-}
+};

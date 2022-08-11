@@ -101,25 +101,20 @@
     </div>
   </main>
   <script src="js/addReceiptHandler.js"></script>
+  <script src="js/AsyncDatabase.js"></script>
   <script src="js/autocomplete.js"></script>
   <script>
-    let tempUserTestList = [
-      "Sznapi",
-      "Wojti",
-      "Tomasz",
-      "Badyl",
-      "Konrad",
-      "Filek",
-      "Someone else",
-    ];
     const input = document.querySelector('.table-text-input');
-    input.addEventListener('input', event => {
-      requestUserList(input.value).then((value) => {
+    Autocomplete.registerInput(input);
+
+    let onInput = event => {
+      AsyncDatabase.requestUserList(input.value).then((value) => {
         let userList = JSON.parse(value);
-        console.log(userList);
-        autocomplete(input, userList);
+        Autocomplete.autocomplete(input, userList);
       });
-    });
+    };
+
+    input.addEventListener('input', onInput);
   </script>
 </body>
 </html>

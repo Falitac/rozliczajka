@@ -363,7 +363,7 @@ div#error-informer {
 
 .autocomplete-items {
   position: absolute;
-  border: 1px solid #888;
+  border: 2px solid #888;
   z-index: 100;
 
   top: 100%;
@@ -375,7 +375,8 @@ div#error-informer {
   text-align: left;
   padding: 10px;
   cursor: pointer;
-  background-color: #555;
+  background-color: #363636;
+  border-bottom: #888 1px solid;
 }
 
 .autocomplete-items div:hover {
@@ -383,5 +384,8 @@ div#error-informer {
 }
 
 .autocomplete-active {
-  background-color: #00aeff !important;
+  background-color: #297fc5 !important;
+  font-weight: bolder;
+  font-size: larger;
+  color: #bebebe;
 }

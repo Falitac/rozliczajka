@@ -92,7 +92,7 @@ class Receipt {
   public function setPayerByID($id) {
     $id = intval($id);
     $index = array_search($id, $this->personList);
-    if($index !== FALSE) {
+    if($index === FALSE) {
       $this->payerID = $id;
     }
   }
@@ -150,6 +150,71 @@ class Receipt {
     return TRUE;
   }
 
+  public function getFromDatabase($receiptID) {
+    global $pdo;
+
+    try {
+      $this->loadDbBasicInfo($pdo, $receiptID);
+      $this->loadDbPeople($pdo, $receiptID);
+      $this->loadDbItems($pdo, $receiptID);
+      $this->calculateShares();
+
+      return TRUE;
+    } catch(PDOException $e) {
+      throw new Exception("On getFromDatabase error: database query exception $e");
+    }
+    return FALSE;
+  }
+
+  private function loadDbBasicInfo($pdo, $receiptID) {
+    $query = 
+      "SELECT * FROM receipts 
+      WHERE :receiptID=receipts.id";
+    $result = $pdo->prepare($query);
+    $result->execute(array('receiptID' => $receiptID));
+
+    $receiptData = $result->fetch(PDO::FETCH_ASSOC);
+    $this->date = $receiptData['date'];
+    $this->price = $receiptData['price'];
+    $this->description = $receiptData['description'];
+    $this->setPayerByID($receiptData['payer_id']);
+  }
+
+  private function loadDbPeople($pdo, $receiptID) {
+    $query = 
+      "SELECT * FROM payments 
+      WHERE :receiptID=receipt_id";
+    $result = $pdo->prepare($query);
+    $result->execute(array('receiptID' => $receiptID));
+
+    while($payment = $result->fetch(PDO::FETCH_ASSOC)) {
+      $this->personList[] = $payment['user_id'];
+    }
+  }
+
+  private function loadDbItems($pdo, $receiptID) {
+    $query = 
+      "SELECT id, name, value FROM items 
+      WHERE :receiptID=receipt_id";
+    $result = $pdo->prepare($query);
+    $result->execute(array('receiptID' => $receiptID));
+
+    while($itemData = $result->fetch(PDO::FETCH_ASSOC)) {
+      $item = new Item($itemData['name'], $itemData['value']);
+
+      $query = 
+        "SELECT person_id FROM item_payers
+        WHERE :itemID=item_id";
+      $payersResult = $pdo->prepare($query);
+      $payersResult->execute(array('itemID' => $itemData['id']));
+      while($itemPayerData = $payersResult->fetch(PDO::FETCH_ASSOC)) {
+        $item->addParticipant($itemPayerData['person_id']);
+      }
+
+      $this->addItem($item);
+    }
+  }
+
   public function saveToDatabase() {
     if(!$this->isDataValid()) {
       return FALSE;
@@ -161,7 +226,6 @@ class Receipt {
       $this->paymentsQuery($pdo, $receiptID);
       $itemPayers = $this->itemQuery($pdo, $receiptID);
       $this->itemPayersQuery($pdo, $itemPayers);
-
     } catch(PDOException $e) {
       throw new Exception("Database query exception $e");
     }
