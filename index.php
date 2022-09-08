@@ -42,8 +42,6 @@
     } else {
       $login_error = 'Nie ma takiego użytkownika';
     }
-
-    print_r($_SESSION);
   }
 
 ?>
@@ -86,7 +84,6 @@
         </div>
       <?php } else { ?>
         <?php
-          print_r($_SESSION);
           if(isset($_SESSION['receipt-error'])) { ?>
             <div style="color: red;">
               <?=$_SESSION['receipt-error'];?>
@@ -118,11 +115,6 @@
         
         <pre style="font-size:1.3em;">
           <h2>Tutaj test</h2>
-        <?php
-          $testReceipt = new Receipt();
-          $testReceipt ->getFromDatabase(5);
-          print_r($testReceipt);
-        ?>
         </pre>
         <script src="js/mainSiteHandler.js"></script>
       <?php } ?>
