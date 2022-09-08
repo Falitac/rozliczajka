@@ -27,14 +27,18 @@
       $dateFormat = date('d.m.Y', $dateFormat);
 
   ?>
-    <tr data-receipt-id="<?=$row['id'];?>">
+    <tr data-receipt-id="<?=$row['id'];?>"
+    onclick="onReceiptRowClick(this);"
+    title="Kliknij by zobaczyć"
+    >
       <td class="td-money"><?=grosz2PLN($row['value']);?></td>
       <td class="td-money"><?=grosz2PLN($row['price']);?></td>
       <td><?=$row['name'];?></td>
       <td><?=$dateFormat;?></td>
       <td
       class="<?=$row['paid']?"paid":"not-paid";?>"
-      onclick="onPaySwitchCellClick(this);"
+      onclick="event.cancelBubble=true;onPaySwitchCellClick(this);"
+      title="Kliknij by zaznaczyć płatność"
       >
       </td>
     </tr>

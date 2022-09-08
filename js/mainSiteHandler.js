@@ -26,3 +26,9 @@ function setReceiptPaid(receiptId, receiptStatus, cell) {
   httpRequest.open("GET", `updateDatabaseReceipt.php?receiptId=${receiptId}&status=${receiptStatus}`, true);
   httpRequest.send();
 }
+
+function onReceiptRowClick(row) {
+  console.log(row);
+  console.log(row.dataset.receiptId);
+  window.location.replace(`./showReceipt.php?receiptID=${row.dataset.receiptId}`);
+}

@@ -160,7 +160,6 @@ input[type=checkbox] {
   margin: 0;
 }
 
-
 select {
   display: block;
   background-color: #494949;
@@ -266,7 +265,6 @@ a:hover {
 
 table {
   border-collapse: collapse;
-  border: 2px #6b6b6b solid;
 }
 
 table#table-person-list {
@@ -279,7 +277,7 @@ table td, table th{
 }
 
 table td {
-  border: 1px #b1b1b1 solid;
+  /*border: 1px #b1b1b1 solid;*/
 }
 
 table td.td-money {
@@ -316,6 +314,17 @@ table tr td.not-paid {
   transition: 0.5s all;
 }
 
+table tr td.not-paid:hover {
+  transform: scale(1.08) translateX(4%);
+  background-color: #ffffff;
+  color: #161616;
+  transition: 0.4s all;
+}
+
+table tr td.not-paid:hover::before {
+  content: 'Zmień';
+}
+
 table tr td.not-paid::before {
   content: 'Nie';
 }
@@ -342,13 +351,18 @@ textarea {
   padding: 10px;
   max-width: 100%;
   line-height: 1.5;
-  border-radius: 5px;
   border: 1px solid #ccc;
-  box-shadow: 2px 2px 2px #999;
   resize: none;
 
   background-color: #161616;
   color: #eee;
+  transition: 0.3s all;
+}
+
+textarea:focus, input:focus {
+  outline: none !important;
+  border: #96fffa 1px solid;
+  transition: 0.3s all;
 }
 
 div#error-informer {

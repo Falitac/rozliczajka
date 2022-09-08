@@ -46,21 +46,26 @@ keyboardElementSwitch: event => {
 
   }
 
+  let requestToChange = false;
   if(goUpKeys.includes(event.keyCode)) {
     if(currentSelectedIndex === null) {
       nextIndex = suggestions.length - 1;
     }
     nextIndex = currentSelectedIndex === 0 ? suggestions.length - 1 : (currentSelectedIndex - 1);
+    requestToChange = true;
   }
   if(goDownKeys.includes(event.keyCode)) {
     if(currentSelectedIndex === null) {
       nextIndex = -1;
     }
     nextIndex = (currentSelectedIndex + 1) % suggestions.length;
+    requestToChange = true;
   }
 
   suggestions[nextIndex].classList.add('autocomplete-active');
-  input.value = suggestions[nextIndex].innerHTML;
+  if(requestToChange) {
+    input.value = suggestions[nextIndex].innerHTML;
+  }
 
   if(event.keyCode == 13) {
     Autocomplete.removeSuggestions(input);

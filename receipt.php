@@ -1,4 +1,7 @@
-<?php 
+<?php
+
+use function PHPSTORM_META\type;
+
 require_once('account.php');
 require_once('database.php');
 
@@ -154,7 +157,9 @@ class Receipt {
     global $pdo;
 
     try {
-      $this->loadDbBasicInfo($pdo, $receiptID);
+      if(!$this->loadDbBasicInfo($pdo, $receiptID)) {
+        return FALSE;
+      }
       $this->loadDbPeople($pdo, $receiptID);
       $this->loadDbItems($pdo, $receiptID);
       $this->calculateShares();
@@ -174,10 +179,14 @@ class Receipt {
     $result->execute(array('receiptID' => $receiptID));
 
     $receiptData = $result->fetch(PDO::FETCH_ASSOC);
+    if(!$receiptData) {
+      return FALSE;
+    }
     $this->date = $receiptData['date'];
     $this->price = $receiptData['price'];
     $this->description = $receiptData['description'];
     $this->setPayerByID($receiptData['payer_id']);
+    return TRUE;
   }
 
   private function loadDbPeople($pdo, $receiptID) {
@@ -188,7 +197,9 @@ class Receipt {
     $result->execute(array('receiptID' => $receiptID));
 
     while($payment = $result->fetch(PDO::FETCH_ASSOC)) {
-      $this->personList[] = $payment['user_id'];
+      $participant = new Account();
+      $participant->setFromDatabaseByID($payment['user_id']);
+      $this->addParticipant($participant);
     }
   }
 
