@@ -103,6 +103,7 @@
   <script src="js/addReceiptHandler.js"></script>
   <script src="js/AsyncDatabase.js"></script>
   <script src="js/autocomplete.js"></script>
+  <script src="js/utility.js"></script>
   <script>
     const input = document.querySelector('.table-text-input');
     Autocomplete.registerInput(input);

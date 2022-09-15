@@ -69,7 +69,8 @@ function addPersonToList(textInput) {
   if(event.key !== 'Enter') {
     return;
   }
-  findUsers(textInput.value);
+  updateReceipt('newParticipant', textInput.value);
+  //findUsers(textInput.value);
   let tablePersonList = document.querySelector('#table-person-list');
   textInput.value = ''
 }
@@ -105,7 +106,9 @@ function updatePersonTable() {
     const firstCell = newRow.insertCell();
     firstCell.innerHTML = i + 1;
     newRow.insertCell().innerHTML = receipt.userNames[id] + (i === 0 ? ' (Płatnik)' : '');
-    newRow.insertCell().innerHTML = convertToPLN(receipt.shares[id]);
+    const moneyCell = newRow.insertCell();
+    moneyCell.innerHTML = receipt.shares[id] / 100;
+    moneyCell.classList.toggle('money');
 
     let deleteCell = newRow.insertCell();
     deleteCell.innerHTML = 'Usuń';
@@ -129,6 +132,7 @@ function updateItemTable() {
     const priceCell = newRow.insertCell();
     priceCell.innerHTML = convertToPLN(new Number(item.price));
     priceCell.classList.toggle('td-money');
+    priceCell.classList.toggle('money');
 
     console.log(`item name ${item.name}`);
     let checkboxes = newRow.insertCell();
@@ -188,6 +192,7 @@ function downloadReceiptJSON() {
       updateItemTable();
       updatePersonTable();
       updateErrorInformer();
+      formatAllMoneyClasses();
     }
   }
   httpRequest.open("GET", `updateReceipt.php?getJSON=1`, true);

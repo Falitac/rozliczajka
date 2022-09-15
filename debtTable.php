@@ -26,7 +26,7 @@
   ?>
     <tr>
       <td><?=$row['name'];?></td>
-      <td><?=grosz2PLN($row['suma']);?></td>
+      <td class="money"><?=grosz2PLN($row['suma']);?></td>
     </tr>
   <?php } ?>
 </table>

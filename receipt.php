@@ -77,6 +77,12 @@ class Receipt {
   }
 
   public function addParticipant($account) {
+    if(!isset($account)) {
+      return;
+    }
+    if(!$account->exists()) {
+      return;
+    }
     if(in_array($account->getId(), $this->personList)) {
       return;
     }
@@ -303,6 +309,26 @@ class Receipt {
         $result->execute($values);
       }
     }
+  }
+
+  public function removeFromDatabase($userID, $receiptID) {
+    // TODO check if anyone has paid
+    global $pdo;
+    if($userID !== $this->payerID) {
+      return FALSE;
+    }
+    if(!isset($this->payerID)) {
+      return FALSE;
+    }
+
+    $query = "DELETE FROM receipts WHERE :receiptID = id";
+    try {
+      $result = $pdo->prepare($query);
+      return $result->execute(array('receiptID' => $receiptID));
+    } catch(Throwable $th) {
+      return FALSE;
+    }
+    return FALSE;
   }
 }
 

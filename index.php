@@ -91,14 +91,20 @@
         <?php
             unset($_SESSION['receipt-error']);
           }
+          if(isset($_SESSION['errors'])) {
+            foreach($_SESSION['errors'] as $errorMessage) { ?>
+            <div class="error-list"><?=$errorMessage;?></div>
+        <?php
+            }
+          unset($_SESSION['errors']);
+          }
         ?>
 
         <div class="user-info fancy-border">
           <h1>Cześć <?= $_SESSION['login-name']?></h1>
           <a href="./logout.php">Wyloguj</a><br>
           <a href="./addReceipt.php">Dodaj paragon</a>
-          <?php require_once('debtTable.php');?>
-          <?php require_once('allDebts.php');?>
+          <div class="debts-info"><?php require_once('allDebts.php');?></div>
         </div>
 
         <div class="receipt-list fancy-border" style="margin-top: 3vh;">
@@ -113,13 +119,11 @@
           </div>
         </div>
         
-        <pre style="font-size:1.3em;">
-          <h2>Tutaj test</h2>
-        </pre>
         <script src="js/mainSiteHandler.js"></script>
       <?php } ?>
       <script src="js/utility.js"></script>
     </div>
   </main>
+  <footer><p>&copy; Konrad Filek</p></footer>
 </body>
 </html>

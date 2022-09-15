@@ -7,6 +7,9 @@ registerInput: (input) => {
 
 autocomplete: (input, itemList) => {
   Autocomplete.removeSuggestions(input);
+  if(itemList.length <= 0) {
+    return;
+  }
 
   const autocompleteList = document.createElement('div');
   autocompleteList.classList.add('autocomplete-items');
@@ -19,6 +22,8 @@ autocomplete: (input, itemList) => {
 
     autocompleteList.appendChild(divChild);
   }
+
+  autocompleteList.children[0].classList.add('autocomplete-active');
 },
 
 keyboardElementSwitch: event => {
@@ -43,7 +48,6 @@ keyboardElementSwitch: event => {
 
   let nextIndex = 0;
   if(currentSelectedIndex === null) {
-
   }
 
   let requestToChange = false;
@@ -64,11 +68,14 @@ keyboardElementSwitch: event => {
 
   suggestions[nextIndex].classList.add('autocomplete-active');
   if(requestToChange) {
-    input.value = suggestions[nextIndex].innerHTML;
   }
 
-  if(event.keyCode == 13) {
+  if(event.keyCode == 27 || event.keyCode == 13) {
     Autocomplete.removeSuggestions(input);
+  }
+  if(event.keyCode === 13) {
+    console.log(`Index: ${nextIndex}`);
+    input.value = suggestions[currentSelectedIndex].innerHTML;
   }
 },
 

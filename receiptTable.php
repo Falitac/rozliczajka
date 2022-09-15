@@ -5,7 +5,7 @@
     <th>Wartość</th>
     <th>Płatnik</th>
     <th>Data</th>
-    <th>Zapłacono?</th>
+    <th>Spłata</th>
   </tr>
   <?php
     global $pdo;
@@ -31,8 +31,8 @@
     onclick="onReceiptRowClick(this);"
     title="Kliknij by zobaczyć"
     >
-      <td class="td-money"><?=grosz2PLN($row['value']);?></td>
-      <td class="td-money"><?=grosz2PLN($row['price']);?></td>
+      <td class="money td-money"><?=$row['value'] / 100;?></td>
+      <td class="money td-money"><?=$row['price'] / 100;?></td>
       <td><?=$row['name'];?></td>
       <td><?=$dateFormat;?></td>
       <td

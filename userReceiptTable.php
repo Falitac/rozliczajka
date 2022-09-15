@@ -4,7 +4,7 @@
     <th>Twoja należność</th>
     <th>Wartość</th>
     <th>Data</th>
-    <th>Zapłacono?</th>
+    <th>Spłata</th>
     <th>Usuń</th>
   </tr>
   <?php
@@ -30,8 +30,8 @@
     <tr data-receipt-id="<?=$row['id'];?>"
     onclick="onReceiptRowClick(this);"
     >
-      <td class="td-money"><?=grosz2PLN($row['value']);?></td>
-      <td class="td-money"><?=grosz2PLN($row['price']);?></td>
+      <td class="money td-money"><?=$row['value'] / 100;?></td>
+      <td class="money td-money"><?=$row['price'] / 100;?></td>
       <td><?=$dateFormat;?></td>
       <td
       class="<?=$row['paid']?"paid":"not-paid";?>"
