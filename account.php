@@ -51,6 +51,25 @@ class Account {
     return $this->name;
   }
 
+  public function exists() {
+    global $pdo;
+    try {
+      $query = "SELECT id, name FROM users WHERE id = :id";
+      $values = array(
+        'id' => $this->id
+      );
+
+      $result = $pdo->prepare($query);
+      $result->execute($values);
+      if($result->rowCount() === 1) {
+        return TRUE;
+      }
+    } catch(\Throwable $exception) {
+      print_r($exception);
+    }
+    return FALSE;
+  }
+
   public function __construct($name = NULL) {
     if(isset($name)) {
       $this->setFromDatabase($name);
@@ -104,6 +123,11 @@ class Account {
 
       $result = $pdo->prepare($query);
       $result->execute($values);
+      if($result->rowCount() === 0) {
+        $this->id = NULL;
+        $this->name = NULL;
+        return $this;
+      }
 
       $row = $result->fetch(PDO::FETCH_ASSOC);
       $this->id = intval($row["id"]);

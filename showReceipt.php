@@ -5,6 +5,10 @@
   require_once('utility.php');
   require_once('receipt.php');
 
+  if(!isSessionStarted()) {
+    session_start();
+  }
+
   $receiptID = null;
   if(!isset($_GET['receiptID']) || $_GET['receiptID'] == '') {
     header('Location: ./');
@@ -68,7 +72,7 @@
                 <tr>
                   <td><?=$number?></td>
                   <td><?= $person == $receipt->payerID ? $personName." (płatnik)" : $personName ?></td>
-                  <td><?=$receipt->shares[$person] / 100?></td>
+                  <td class="money td-money"><?=$receipt->shares[$person] / 100?></td>
                 </tr>
               <?php $number++; } ?>
             </table>
@@ -89,7 +93,7 @@
             ?>
             <tr>
               <td><?=$item->name?></td>
-              <td><?=$item->price / 100?></td>
+              <td class="money td-money"><?=$item->price / 100?></td>
               <td>
                 <?php
                   for($i = $personCount - 1; $i >= 0; $i--) {
@@ -103,7 +107,28 @@
           </table>
         </div>
       </div>
+      <?php
+        if($receipt->payerID === $_SESSION['login-id']) {
+      ?>
+      <input type="submit" value="Usuń paragon❌" style="max-width: 220px; border: 1px solid #999" onclick="makeRemoveRequest(<?= $receiptID;?>)"></input>
+      <?php } ?>
     </div>
+    <script src="js/utility.js"></script>
+    <script>
+      function makeRemoveRequest(id) {
+        let userDecision = confirm("Czy napewno chcesz usunąć ten paragon? Ta zmiana jest nieodwracalna");
+        if(userDecision) {
+          let httpRequest = new XMLHttpRequest();
+          httpRequest.onreadystatechange = () => {
+            if(httpRequest.readyState == 4 && httpRequest.status == 200) {
+              window.location = './';
+            }
+          };
+          httpRequest.open("GET", `receiptRemover.php?receiptID=${id}`, true);
+          httpRequest.send();
+        }
+      }
+    </script>
   </main>
 </body>
 </html>

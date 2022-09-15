@@ -16,10 +16,13 @@ function setReceiptPaid(receiptId, receiptStatus, cell) {
   let httpRequest = new XMLHttpRequest();
   httpRequest.onreadystatechange = () => {
     if(httpRequest.readyState == 4 && httpRequest.status == 200) {
-      console.log(httpRequest.responseText);
       if(httpRequest.responseText === "Successfull") {
         cell.classList.toggle("paid");
         cell.classList.toggle("not-paid");
+
+        updateDebtTableInfo();
+      } else {
+        console.error('can not update');
       }
     }
   }
@@ -28,7 +31,18 @@ function setReceiptPaid(receiptId, receiptStatus, cell) {
 }
 
 function onReceiptRowClick(row) {
-  console.log(row);
-  console.log(row.dataset.receiptId);
-  window.location.replace(`./showReceipt.php?receiptID=${row.dataset.receiptId}`);
+  window.location.href = `./showReceipt.php?receiptID=${row.dataset.receiptId}`;
+}
+
+function updateDebtTableInfo() {
+  let httpRequest = new XMLHttpRequest();
+  httpRequest.onreadystatechange = () => {
+    if(httpRequest.readyState == 4 && httpRequest.status == 200) {
+      const debtsInfo = document.querySelector('div.debts-info');
+      debtsInfo.innerHTML = httpRequest.responseText;
+    }
+  };
+
+  httpRequest.open("GET", `allDebts.php`, true);
+  httpRequest.send();
 }
