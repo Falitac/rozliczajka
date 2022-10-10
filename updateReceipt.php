@@ -75,10 +75,12 @@ function updateReceipt() {
     try {
       $savedSuccessfully = $newReceipt->saveToDatabase();
     } catch (\Throwable $th) {
-      $_SESSION['receipt-error'] = "Could not save to database: $th";
+      $_SESSION['receipt-error'] = "Could not save to database\n";
     }
     if(!$savedSuccessfully) {
       $_SESSION['receipt-error'] = "Could not save to database\n";
+    } else { // should not be an error but we'll change it soon
+      $_SESSION['receipt-error'] = "Saved to database\n"; 
     }
   }
 

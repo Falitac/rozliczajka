@@ -5,7 +5,6 @@ function formatPLN(number) {
 
 function formatAllMoneyClasses() {
   let moneyClasses = document.querySelectorAll('.money');
-  console.log(moneyClasses);
   for(let i = 0; i < moneyClasses.length; i++) {
     moneyClasses[i].innerHTML = formatPLN(new Number(moneyClasses[i].innerHTML));
   }

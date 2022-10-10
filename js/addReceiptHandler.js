@@ -37,11 +37,10 @@ function updateReceipt(attribute, value) {
   httpRequest.onreadystatechange = () => {
     if(httpRequest.readyState == 4 && httpRequest.status == 200) {
       const output = document.querySelector('pre');
-      output.innerHTML = httpRequest.responseText;
 
       if(attribute == 'saveToDatabase') {
         console.log(httpRequest.responseText);
-        //window.location='./';
+        window.location='./';
       }
       downloadReceiptJSON();
     }
@@ -134,7 +133,6 @@ function updateItemTable() {
     priceCell.classList.toggle('td-money');
     priceCell.classList.toggle('money');
 
-    console.log(`item name ${item.name}`);
     let checkboxes = newRow.insertCell();
     for(let j = receipt.personList.length - 1; j >= 0; j--) {
       let checkbox = document.createElement('input');
@@ -143,13 +141,7 @@ function updateItemTable() {
       checkbox.dataset.itemID = i;
       checkbox.dataset.payerID = receipt.personList[j];
 
-      console.log(`person: ${receipt.personList[j]}`);
-      console.log(`item payers: ${item.payers}`);
-
-
       checkbox.checked = item.payers.includes(receipt.personList[j]);
-      console.log(`includes? ${item.payers.includes(receipt.personList[j])}`);
-      //console.log(`checkbox state ${checkbox.checked}`);
 
       checkbox.setAttribute('onchange', `checkboxHandler(this);`);
       checkboxes.appendChild(checkbox);
@@ -202,7 +194,6 @@ function downloadReceiptJSON() {
 function checkboxHandler(checkbox) {
   const operationData = `${checkbox.dataset.itemID};${checkbox.dataset.payerID}`;
   if(checkbox.checked) {
-    console.log("set checkbox payerl");
     updateReceipt("setItemPayer", operationData);
     return;
   }
