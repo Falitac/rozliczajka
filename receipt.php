@@ -312,12 +312,14 @@ class Receipt {
   }
 
   public function removeFromDatabase($userID, $receiptID) {
-    // TODO check if anyone has paid
     global $pdo;
     if($userID !== $this->payerID) {
       return FALSE;
     }
     if(!isset($this->payerID)) {
+      return FALSE;
+    }
+    if($this->hasSomeoneAlreadyPaid($receiptID)) {
       return FALSE;
     }
 
@@ -327,6 +329,27 @@ class Receipt {
       return $result->execute(array('receiptID' => $receiptID));
     } catch(Throwable $th) {
       return FALSE;
+    }
+    return FALSE;
+  }
+
+  public function hasSomeoneAlreadyPaid($receiptID) {
+    global $pdo;
+    try {
+      $result = $pdo->prepare("SELECT paid, user_id FROM payments WHERE receipt_id=:receiptID");
+      $result->execute(array('receiptID' => $receiptID));
+      $payments = $result->fetchAll(PDO::FETCH_ASSOC);
+    } catch(Throwable $th) {
+      return TRUE;
+    }
+
+    foreach($payments as $payment) {
+      if($payment['user_id'] === $this->payerID) {
+        continue;
+      }
+      if($payment['paid']) {
+        return TRUE;
+      }
     }
     return FALSE;
   }
