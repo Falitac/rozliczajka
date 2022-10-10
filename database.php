@@ -1,6 +1,6 @@
 <?php
   $db_server_name = 'localhost';
-  $db_name = 'rozliczajka';
+  $db_name = 'rozliczajka-test';
   $db_username = 'root';
   $db_password = '';
 

@@ -93,13 +93,24 @@
           </table>
         </div>
       </div>
-      <input id="submit-save-receipt" type="submit" value="Zapisz w bazie" onclick="receiptSubmitToDatabase(this);">
-      </input>
+      <div class="image-section">
+        <input type="button" value="Zatwierdź i wyślij" onclick="uploadImageReceipt();"/>
+        <input
+          id="upload-image-receipt"
+          type="file"
+          name="receipt-image"
+          accept="image/*"/>
+        <div class="receipt-preview">
+          <p>Brak zdjęcia</p>
+        </div>
+        <input id="submit-save-receipt" type="submit" value="Zapisz w bazie" onclick="receiptSubmitToDatabase(this);">
+      </div>
       <!--<div id="qrcode">-->
       <pre id="php-output">
       </pre>
     </div>
   </main>
+  <script src="js/uploadImageHandler.js"></script>
   <script src="js/addReceiptHandler.js"></script>
   <script src="js/AsyncDatabase.js"></script>
   <script src="js/autocomplete.js"></script>

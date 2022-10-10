@@ -7,6 +7,7 @@ require_once('database.php');
 
 class Receipt {
   public $payerID;
+  public $imageName;
   public $date;
   public $price;
   public $itemList;
@@ -20,6 +21,7 @@ class Receipt {
 
   public function __construct() {
     $this->payerID = NULL;
+    $this->imageName = NULL;
     $this->date = new DateTime();
     $this->price = 0;
     $this->description = '';
@@ -159,6 +161,10 @@ class Receipt {
     return TRUE;
   }
 
+  public function setImageName($name) {
+    $this->imageName = $name;
+  }
+
   public function getFromDatabase($receiptID) {
     global $pdo;
 
@@ -192,6 +198,7 @@ class Receipt {
     $this->price = $receiptData['price'];
     $this->description = $receiptData['description'];
     $this->setPayerByID($receiptData['payer_id']);
+    $this->setImageName($receiptData['image']);
     return TRUE;
   }
 
@@ -250,7 +257,8 @@ class Receipt {
   }
 
   private function receiptQuery($pdo) {
-    $query = "INSERT INTO receipts(date, price, payer_id, description) VALUES (:date, :price, :payer_id, :description)";
+    $query = "INSERT INTO receipts(date, price, payer_id, image, description)
+              VALUES (:date, :price, :payer_id, :image, :description)";
 
     $sqlDateFormat = $this->date->format('Y-m-d');
 
@@ -258,6 +266,7 @@ class Receipt {
       'date' => $sqlDateFormat,
       'price' => $this->price,
       'payer_id' => $this->payerID,
+      'image' => $this->imageName,
       'description' => $this->description,
     );
     $result = $pdo->prepare($query);

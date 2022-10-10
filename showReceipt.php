@@ -2,6 +2,7 @@
   session_start();
   require_once('checkIfLogged.php');
   require_once('database.php');
+  require_once('globals.php');
   require_once('utility.php');
   require_once('receipt.php');
 
@@ -105,6 +106,11 @@
             </tr>
             <?php } ?>
           </table>
+        </div>
+        <div class="receipt-image">
+          <?php if(!is_null($receipt->imageName)) { ?>
+            <img src="<?= RECEIPTS_IMG_LOCATION . $receipt->imageName; ?>" width="550"/>
+          <?php } ?>
         </div>
       </div>
       <?php
