@@ -94,12 +94,15 @@
         </div>
       </div>
       <div class="image-section">
-        <input type="button" value="Zatwierdź i wyślij" onclick="uploadImageReceipt();"/>
-        <input
-          id="upload-image-receipt"
-          type="file"
-          name="receipt-image"
-          accept="image/*"/>
+        <input type="button" value="Zatwierdź zdjęcie" onclick="uploadImageReceipt();"/>
+        <label for="upload-image-receipt" class="receipt-image-upload">
+          Wybierz zdjęcie (JPG, PNG)
+        </label>
+          <input
+            id="upload-image-receipt"
+            type="file"
+            name="receipt-image"
+            accept="image/*"/>
         <div class="receipt-preview">
           <p>Brak zdjęcia</p>
         </div>

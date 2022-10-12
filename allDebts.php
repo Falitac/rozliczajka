@@ -45,9 +45,9 @@
         <?php
           if($value['Diff'] < 0) {
         ?>
-          <td>Spłać</td>
+          <td></td>
         <?php } else {?>
-          <td>Potwierdź zapłatę</td>
+          <td class="alignment" onclick="event.cancelBubble=true;onPaymentAlignment(this);">Wyrównaj długi</td>
         <?php }?>
       </tr>
   <?php } ?>
@@ -65,6 +65,7 @@
     <td></td>
   </tr>
 </table>
+<script src="js/paymentAlignmentHandler.js"></script>
 
 <?php
   }

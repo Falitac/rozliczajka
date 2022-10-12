@@ -321,6 +321,7 @@ table tr:not(tr:first-child):hover{
   cursor: pointer;
 }
 
+/* */
 table tr td.paid {
   background-color: #3b8b16;
   transition: 0.5s all;
@@ -335,7 +336,7 @@ table tr td.not-paid {
   transition: 0.5s all;
 }
 
-table tr td.not-paid:hover {
+table tr td.not-paid:hover, table tr td.alignment:hover {
   transform: scale(1.08) translateX(4%);
   background-color: #ffffff;
   color: #161616;
@@ -350,6 +351,7 @@ table tr td.not-paid::before {
   content: 'Nie';
 }
 
+/* */
 .content .receipt-info {
   display: grid;
   grid-template-columns: auto auto;
@@ -384,6 +386,18 @@ textarea:focus, input:focus {
   outline: none !important;
   border: #96fffa 1px solid;
   transition: 0.3s all;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.receipt-image-upload {
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  margin-bottom: 2vh;
+  cursor: pointer;
 }
 
 div#error-informer {

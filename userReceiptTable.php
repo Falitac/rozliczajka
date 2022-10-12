@@ -5,11 +5,10 @@
     <th>Wartość</th>
     <th>Data</th>
     <th>Spłata</th>
-    <th>Usuń</th>
   </tr>
   <?php
     global $pdo;
-    $query = "SELECT receipts.id, date, price, `payments`.`value`, `payments`.`paid`, payer_id
+    $query = "SELECT receipts.id, receipts.date, price, `payments`.`value`, `payments`.`paid`, payer_id
       FROM payments
       INNER JOIN receipts
       ON payments.receipt_id = receipts.id
@@ -35,7 +34,6 @@
       <td><?=$dateFormat;?></td>
       <td
       class="<?=$row['paid']?"paid":"not-paid";?>"
-      onclick="event.cancelBubble=true;onPaySwitchCellClick(this);"
       >
       </td>
     </tr>

@@ -1,7 +1,7 @@
 <h2>Paragony obce</h2>
 <table>
   <tr>
-    <th>Twoja należność</th>
+    <th>Należność</th>
     <th>Wartość</th>
     <th>Płatnik</th>
     <th>Data</th>
@@ -9,7 +9,7 @@
   </tr>
   <?php
     global $pdo;
-    $query = "SELECT receipts.id, date, price, users.name, `payments`.`value`, `payments`.`paid`, payer_id
+    $query = "SELECT receipts.id, receipts.date, price, users.name, `payments`.`value`, `payments`.`paid`, payer_id
       FROM payments
       INNER JOIN receipts
       ON payments.receipt_id = receipts.id

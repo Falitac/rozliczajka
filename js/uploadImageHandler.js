@@ -2,7 +2,6 @@
 const fileInput = document.querySelector('input#upload-image-receipt');
 const imagePreview = document.querySelector('.receipt-preview');
 
-fileInput.style.opacity=0;
 
 fileInput.addEventListener('change', () => {
   while(imagePreview.firstChild) {
@@ -10,7 +9,6 @@ fileInput.addEventListener('change', () => {
   }
 
   const inputFiles = fileInput.files;
-  console.log(inputFiles);
   if(inputFiles.length === 0) {
     imagePreview.innerHTML = '<p>Brak zdjęć</p>';
   } else {
