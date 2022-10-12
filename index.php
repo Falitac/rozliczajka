@@ -1,6 +1,7 @@
 <?php
   include_once('database.php');
   include_once('utility.php');
+  include_once('receipt.php');
   session_start();
   $login_error = NULL;
 
@@ -41,8 +42,6 @@
     } else {
       $login_error = 'Nie ma takiego użytkownika';
     }
-
-    print_r($_SESSION);
   }
 
 ?>
@@ -85,7 +84,6 @@
         </div>
       <?php } else { ?>
         <?php
-          print_r($_SESSION);
           if(isset($_SESSION['receipt-error'])) { ?>
             <div style="color: red;">
               <?=$_SESSION['receipt-error'];?>
@@ -93,14 +91,20 @@
         <?php
             unset($_SESSION['receipt-error']);
           }
+          if(isset($_SESSION['errors'])) {
+            foreach($_SESSION['errors'] as $errorMessage) { ?>
+            <div class="error-list"><?=$errorMessage;?></div>
+        <?php
+            }
+          unset($_SESSION['errors']);
+          }
         ?>
 
         <div class="user-info fancy-border">
           <h1>Cześć <?= $_SESSION['login-name']?></h1>
           <a href="./logout.php">Wyloguj</a><br>
           <a href="./addReceipt.php">Dodaj paragon</a>
-          <?php require_once('debtTable.php');?>
-          <?php require_once('allDebts.php');?>
+          <div class="debts-info"><?php require_once('allDebts.php');?></div>
         </div>
 
         <div class="receipt-list fancy-border" style="margin-top: 3vh;">
@@ -114,10 +118,12 @@
             </div>
           </div>
         </div>
+        
         <script src="js/mainSiteHandler.js"></script>
       <?php } ?>
       <script src="js/utility.js"></script>
     </div>
   </main>
+  <footer><p>&copy; Konrad Filek</p></footer>
 </body>
 </html>

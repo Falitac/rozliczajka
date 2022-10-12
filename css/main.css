@@ -53,6 +53,7 @@ header h1 {
 }
 
 main {
+  min-height: calc(100vh - 9vh);
 }
 
 main .content {
@@ -60,6 +61,26 @@ main .content {
   margin-top: 5vh;
   margin-left: auto;
   margin-right: auto;
+}
+
+footer {
+  display: flex;
+  flex-flow: row wrap;
+  margin: 0 auto;
+  margin-top: 4vh;
+  width: 100%;
+  text-align: center;
+  height: 5vh;
+  background-color: #3e7eb3;
+  box-shadow: #000000 0px -2px 12px;
+  color: #ffffff;
+}
+
+footer p {
+  font-size: 0.95em;
+  font-family: 'Raleway';
+  margin: auto auto;
+  text-align: center;
 }
 
 h2 {
@@ -83,7 +104,7 @@ h2 {
   padding-top: 1.4em;
   padding-bottom: 1.4em;
   font-size: 1.2em;
-  border-radius: 1em 1em 1em 1em;
+  /*border-radius: 1em 1em 1em 1em;*/
 }
 
 .login-data h2 {
@@ -96,7 +117,7 @@ h2 {
 .fancy-border {
   --border-size: 1em;
   --border-bigger-size: calc(var(--border-size) * 3);
-  border-radius: var(--border-size) var(--border-size) var(--border-size) var(--border-size);
+  /*border-radius: var(--border-size) var(--border-size) var(--border-size) var(--border-size);*/
   background-color: #3e7eb3;
   padding: 3em 5em;
 }
@@ -159,7 +180,6 @@ input[type=number] {
 input[type=checkbox] {
   margin: 0;
 }
-
 
 select {
   display: block;
@@ -266,7 +286,6 @@ a:hover {
 
 table {
   border-collapse: collapse;
-  border: 2px #6b6b6b solid;
 }
 
 table#table-person-list {
@@ -279,7 +298,7 @@ table td, table th{
 }
 
 table td {
-  border: 1px #b1b1b1 solid;
+  /*border: 1px #b1b1b1 solid;*/
 }
 
 table td.td-money {
@@ -302,6 +321,7 @@ table tr:not(tr:first-child):hover{
   cursor: pointer;
 }
 
+/* */
 table tr td.paid {
   background-color: #3b8b16;
   transition: 0.5s all;
@@ -316,10 +336,22 @@ table tr td.not-paid {
   transition: 0.5s all;
 }
 
+table tr td.not-paid:hover, table tr td.alignment:hover {
+  transform: scale(1.08) translateX(4%);
+  background-color: #ffffff;
+  color: #161616;
+  transition: 0.4s all;
+}
+
+table tr td.not-paid:hover::before {
+  content: 'Zmień';
+}
+
 table tr td.not-paid::before {
   content: 'Nie';
 }
 
+/* */
 .content .receipt-info {
   display: grid;
   grid-template-columns: auto auto;
@@ -342,16 +374,80 @@ textarea {
   padding: 10px;
   max-width: 100%;
   line-height: 1.5;
-  border-radius: 5px;
   border: 1px solid #ccc;
-  box-shadow: 2px 2px 2px #999;
   resize: none;
 
   background-color: #161616;
   color: #eee;
+  transition: 0.3s all;
+}
+
+textarea:focus, input:focus {
+  outline: none !important;
+  border: #96fffa 1px solid;
+  transition: 0.3s all;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.receipt-image-upload {
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  margin-bottom: 2vh;
+  cursor: pointer;
 }
 
 div#error-informer {
   color: #f5ca53;
   white-space: pre-wrap;
+}
+
+/* Autocompleteness */
+.autocomplete {
+  position: relative;
+}
+
+.autocomplete-items {
+  position: absolute;
+  border: 2px solid #888;
+  z-index: 100;
+
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
+.autocomplete-items div {
+  text-align: left;
+  padding: 10px;
+  cursor: pointer;
+  background-color: #363636;
+  border-bottom: #888 1px solid;
+}
+
+.autocomplete-items div:hover {
+  background-color: #aaa;
+}
+
+.autocomplete-active {
+  background-color: #2627ba !important;
+  font-weight: bolder;
+  color: #bebebe;
+}
+
+.money {
+
+}
+
+.error-list {
+  color: red;
+  text-align: center;
+  background-color: #3a3a3a;
+  margin-bottom: 2.5em;
+  padding: .3em .6em;
+  max-width: 310px;
+  margin: auto;
 }

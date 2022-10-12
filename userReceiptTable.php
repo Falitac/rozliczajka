@@ -3,13 +3,12 @@
   <tr>
     <th>Twoja należność</th>
     <th>Wartość</th>
-    <th>???</th>
     <th>Data</th>
-    <th>Zapłacono?</th>
+    <th>Spłata</th>
   </tr>
   <?php
     global $pdo;
-    $query = "SELECT receipts.id, date, price, users.name, `payments`.`value`, `payments`.`paid`, payer_id
+    $query = "SELECT receipts.id, receipts.date, price, `payments`.`value`, `payments`.`paid`, payer_id
       FROM payments
       INNER JOIN receipts
       ON payments.receipt_id = receipts.id
@@ -27,14 +26,14 @@
       $dateFormat = date('d.m.Y', $dateFormat);
 
   ?>
-    <tr data-receipt-id="<?=$row['id'];?>">
-      <td class="td-money"><?=grosz2PLN($row['value']);?></td>
-      <td class="td-money"><?=grosz2PLN($row['price']);?></td>
-      <td><?=$row['name'];?></td>
+    <tr data-receipt-id="<?=$row['id'];?>"
+    onclick="onReceiptRowClick(this);"
+    >
+      <td class="money td-money"><?=$row['value'] / 100;?></td>
+      <td class="money td-money"><?=$row['price'] / 100;?></td>
       <td><?=$dateFormat;?></td>
       <td
       class="<?=$row['paid']?"paid":"not-paid";?>"
-      onclick="onPaySwitchCellClick(this);"
       >
       </td>
     </tr>

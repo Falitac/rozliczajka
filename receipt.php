@@ -1,9 +1,14 @@
-<?php 
+<?php
+
+use function PHPSTORM_META\type;
+
 require_once('account.php');
 require_once('database.php');
+require_once('item.php');
 
 class Receipt {
   public $payerID;
+  public $imageName;
   public $date;
   public $price;
   public $itemList;
@@ -17,6 +22,7 @@ class Receipt {
 
   public function __construct() {
     $this->payerID = NULL;
+    $this->imageName = NULL;
     $this->date = new DateTime();
     $this->price = 0;
     $this->description = '';
@@ -74,6 +80,12 @@ class Receipt {
   }
 
   public function addParticipant($account) {
+    if(!isset($account)) {
+      return;
+    }
+    if(!$account->exists()) {
+      return;
+    }
     if(in_array($account->getId(), $this->personList)) {
       return;
     }
@@ -92,7 +104,7 @@ class Receipt {
   public function setPayerByID($id) {
     $id = intval($id);
     $index = array_search($id, $this->personList);
-    if($index !== FALSE) {
+    if($index === FALSE) {
       $this->payerID = $id;
     }
   }
@@ -150,6 +162,84 @@ class Receipt {
     return TRUE;
   }
 
+  public function setImageName($name) {
+    $this->imageName = $name;
+  }
+
+  public function getFromDatabase($receiptID) {
+    global $pdo;
+
+    try {
+      if(!$this->loadDbBasicInfo($pdo, $receiptID)) {
+        return FALSE;
+      }
+      $this->loadDbPeople($pdo, $receiptID);
+      $this->loadDbItems($pdo, $receiptID);
+      $this->calculateShares();
+
+      return TRUE;
+    } catch(PDOException $e) {
+      throw new Exception("On getFromDatabase error: database query exception $e");
+    }
+    return FALSE;
+  }
+
+  private function loadDbBasicInfo($pdo, $receiptID) {
+    $query = 
+      "SELECT * FROM receipts 
+      WHERE :receiptID=receipts.id";
+    $result = $pdo->prepare($query);
+    $result->execute(array('receiptID' => $receiptID));
+
+    $receiptData = $result->fetch(PDO::FETCH_ASSOC);
+    if(!$receiptData) {
+      return FALSE;
+    }
+    $this->date = $receiptData['date'];
+    $this->price = $receiptData['price'];
+    $this->description = $receiptData['description'];
+    $this->setPayerByID($receiptData['payer_id']);
+    $this->setImageName($receiptData['image']);
+    return TRUE;
+  }
+
+  private function loadDbPeople($pdo, $receiptID) {
+    $query = 
+      "SELECT * FROM payments 
+      WHERE :receiptID=receipt_id";
+    $result = $pdo->prepare($query);
+    $result->execute(array('receiptID' => $receiptID));
+
+    while($payment = $result->fetch(PDO::FETCH_ASSOC)) {
+      $participant = new Account();
+      $participant->setFromDatabaseByID($payment['user_id']);
+      $this->addParticipant($participant);
+    }
+  }
+
+  private function loadDbItems($pdo, $receiptID) {
+    $query = 
+      "SELECT id, name, value FROM items 
+      WHERE :receiptID=receipt_id";
+    $result = $pdo->prepare($query);
+    $result->execute(array('receiptID' => $receiptID));
+
+    while($itemData = $result->fetch(PDO::FETCH_ASSOC)) {
+      $item = new Item($itemData['name'], $itemData['value']);
+
+      $query = 
+        "SELECT person_id FROM item_payers
+        WHERE :itemID=item_id";
+      $payersResult = $pdo->prepare($query);
+      $payersResult->execute(array('itemID' => $itemData['id']));
+      while($itemPayerData = $payersResult->fetch(PDO::FETCH_ASSOC)) {
+        $item->addParticipant($itemPayerData['person_id']);
+      }
+
+      $this->addItem($item);
+    }
+  }
+
   public function saveToDatabase() {
     if(!$this->isDataValid()) {
       return FALSE;
@@ -161,7 +251,6 @@ class Receipt {
       $this->paymentsQuery($pdo, $receiptID);
       $itemPayers = $this->itemQuery($pdo, $receiptID);
       $this->itemPayersQuery($pdo, $itemPayers);
-
     } catch(PDOException $e) {
       throw new Exception("Database query exception $e");
     }
@@ -169,7 +258,8 @@ class Receipt {
   }
 
   private function receiptQuery($pdo) {
-    $query = "INSERT INTO receipts(date, price, payer_id, description) VALUES (:date, :price, :payer_id, :description)";
+    $query = "INSERT INTO receipts(date, price, payer_id, image, description)
+              VALUES (:date, :price, :payer_id, :image, :description)";
 
     $sqlDateFormat = $this->date->format('Y-m-d');
 
@@ -177,6 +267,7 @@ class Receipt {
       'date' => $sqlDateFormat,
       'price' => $this->price,
       'payer_id' => $this->payerID,
+      'image' => $this->imageName,
       'description' => $this->description,
     );
     $result = $pdo->prepare($query);
@@ -186,13 +277,14 @@ class Receipt {
   }
 
   private function paymentsQuery($pdo, $receiptID) {
-    $query= "INSERT INTO payments(receipt_id, user_id, value) VALUES (:receipt_id, :user_id, :value)";
+    $query= "INSERT INTO payments(receipt_id, user_id, value, paid) VALUES (:receipt_id, :user_id, :value, :paid)";
 
     foreach($this->shares as $userID => $price) {
       $values = array(
         "receipt_id" => $receiptID,
         "user_id" => $userID,
-        "value" => $price
+        "value" => $price,
+        "paid" => $userID === $this->payerID
       );
       $result = $pdo->prepare($query);
       $result->execute($values);
@@ -228,69 +320,48 @@ class Receipt {
       }
     }
   }
-}
 
-class Item {
-  public $name;
-  public $price;
-  public $payers;
-
-  public function __construct($name = "Default", $price = 0) {
-    $this->name = $name;
-    $this->setPrice($price);
-    $this->payers = array();
-  }
-
-  public function addEveryoneFromReceipt($receipt) {
-    foreach($receipt->personList as $person) {
-      $this->addParticipant($person);
+  public function removeFromDatabase($userID, $receiptID) {
+    global $pdo;
+    if($userID !== $this->payerID) {
+      return FALSE;
     }
-  }
-
-  public function addParticipant($id) {
-    $result = array_search($id, $this->payers);
-    if($result === false) {
-      $this->payers[] = intval($id);
+    if(!isset($this->payerID)) {
+      return FALSE;
     }
-  }
-
-  public function removeParticipant($id) {
-    $result = array_search($id, $this->payers);
-    if($result !== false) {
-      array_splice($this->payers, $result, 1);
+    if($this->hasSomeoneAlreadyPaid($receiptID)) {
+      return FALSE;
     }
-  }
 
-  public function setPrice($price) {
-    $this->price = max(0, intval($price));
-  }
-
-  public function setName($name) {
-    if($name === '') {
-      $this->name = 'default_name';
-      return;
+    $query = "DELETE FROM receipts WHERE :receiptID = id";
+    try {
+      $result = $pdo->prepare($query);
+      return $result->execute(array('receiptID' => $receiptID));
+    } catch(Throwable $th) {
+      return FALSE;
     }
-    $this->name = $name;
+    return FALSE;
   }
 
-  public function getName() {
-    return $this->name;
-  }
-
-  public function getPrice() {
-    return $this->price;
-  }
-
-  public function getPayers() {
-    return $this->payers;
-  }
-
-  public function getSharedPrice() {
-    $personCount = count($this->payers);
-    if($personCount === 0) {
-      return -1;
+  public function hasSomeoneAlreadyPaid($receiptID) {
+    global $pdo;
+    try {
+      $result = $pdo->prepare("SELECT paid, user_id FROM payments WHERE receipt_id=:receiptID");
+      $result->execute(array('receiptID' => $receiptID));
+      $payments = $result->fetchAll(PDO::FETCH_ASSOC);
+    } catch(Throwable $th) {
+      return TRUE;
     }
-    return intdiv($this->price , $personCount);
+
+    foreach($payments as $payment) {
+      if($payment['user_id'] === $this->payerID) {
+        continue;
+      }
+      if($payment['paid']) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 }
 

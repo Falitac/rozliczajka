@@ -23,10 +23,16 @@ function setReceiptPaidValue($loginId, $receiptId, $status) {
   global $pdo;
 
   try {
-    $sql = 'UPDATE `payments` SET `paid` = :status WHERE `receipt_id` = :receiptId AND `user_id` = :user_id';
+    $sql = 'UPDATE `payments` SET `paid` = :status, `date` = :date WHERE `receipt_id` = :receiptId AND `user_id` = :user_id';
+    $today = new DateTime();
+    $today = $today->format('Y-m-d');
+    if(!$status) {
+      $today = null;
+    }
 
     $values = [
       'status' => $status,
+      'date' => $today,
       'receiptId' => $receiptId,
       'user_id' => $loginId
     ];

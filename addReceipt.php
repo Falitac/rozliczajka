@@ -1,4 +1,5 @@
 <?php
+  session_start();
   require_once('checkIfLogged.php');
   require_once('database.php');
   require_once('utility.php');
@@ -14,7 +15,6 @@
   } else {
     $newReceipt = unserialize($_SESSION['new-receipt']);
   }
-
 
 ?>
 <!DOCTYPE html>
@@ -63,7 +63,9 @@
               </tr>
               <tr>
                 <td colspan="4" style="padding: 0;">
-                  <input class="table-text-input" onkeydown="addPersonToList(this);" type="text" placeholder="Dodaj osobę" ></input>
+                  <div class="autocomplete">
+                    <input class="table-text-input" onkeydown="addPersonToList(this);" type="text" placeholder="Dodaj osobę" autocomplete="off"></input>
+                  </div>
                 </td>
               </tr>
             </table>
@@ -91,14 +93,43 @@
           </table>
         </div>
       </div>
-      <input id="submit-save-receipt" type="submit" value="Zapisz w bazie" onclick="receiptSubmitToDatabase(this);">
-      </input>
+      <div class="image-section">
+        <input type="button" value="Zatwierdź zdjęcie" onclick="uploadImageReceipt();"/>
+        <label for="upload-image-receipt" class="receipt-image-upload">
+          Wybierz zdjęcie (JPG, PNG)
+        </label>
+          <input
+            id="upload-image-receipt"
+            type="file"
+            name="receipt-image"
+            accept="image/*"/>
+        <div class="receipt-preview">
+          <p>Brak zdjęcia</p>
+        </div>
+        <input id="submit-save-receipt" type="submit" value="Zapisz w bazie" onclick="receiptSubmitToDatabase(this);">
+      </div>
       <!--<div id="qrcode">-->
       <pre id="php-output">
       </pre>
     </div>
   </main>
-  <script src="js/addReceiptHandler.js">
+  <script src="js/uploadImageHandler.js"></script>
+  <script src="js/addReceiptHandler.js"></script>
+  <script src="js/AsyncDatabase.js"></script>
+  <script src="js/autocomplete.js"></script>
+  <script src="js/utility.js"></script>
+  <script>
+    const input = document.querySelector('.table-text-input');
+    Autocomplete.registerInput(input);
+
+    let onInput = event => {
+      AsyncDatabase.requestUserList(input.value).then((value) => {
+        let userList = JSON.parse(value);
+        Autocomplete.autocomplete(input, userList);
+      });
+    };
+
+    input.addEventListener('input', onInput);
   </script>
 </body>
 </html>

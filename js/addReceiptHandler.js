@@ -1,7 +1,6 @@
 let usersInReceipt = [];
 
 let receipt = null;
-let shares = [];
 
 if(receipt === null) {
   downloadReceiptJSON();
@@ -12,16 +11,6 @@ function fillTodayDate() {
   let today = new Date().toJSON().slice(0,10);
   formDate.value = today;
 }
-/*
-new QRCode(document.getElementById("qrcode"), {
-  text: "||nr_bank|kwota_gr|odbiorca|tytul|||",
-  width: 400,
-  height: 400,
-  colorDark : "#000",
-  colorLight : "#fff",
-  correctLevel : QRCode.CorrectLevel.M
-});
-*/
 
 function convertToGrosz(value) {
   return Math.round(value * 100);
@@ -42,20 +31,16 @@ function updateReceiptPrice(input) {
   updateReceipt('newPrice', convertToGrosz(input.value));
 }
 
-function changePayer() {
-}
-
 function updateReceipt(attribute, value) {
   let httpRequest = new XMLHttpRequest();
 
   httpRequest.onreadystatechange = () => {
     if(httpRequest.readyState == 4 && httpRequest.status == 200) {
       const output = document.querySelector('pre');
-      output.innerHTML = httpRequest.responseText;
 
       if(attribute == 'saveToDatabase') {
         console.log(httpRequest.responseText);
-        //window.location='./';
+        window.location='./';
       }
       downloadReceiptJSON();
     }
@@ -75,7 +60,7 @@ function findUsers(name) {
       }
     }
   }
-  httpRequest.open("GET", `searchForPeople.php?name=${name}`, true);
+  httpRequest.open("GET", `searchUsers.php?name=${name}`, true);
   httpRequest.send();
 }
 
@@ -83,7 +68,8 @@ function addPersonToList(textInput) {
   if(event.key !== 'Enter') {
     return;
   }
-  findUsers(textInput.value);
+  updateReceipt('newParticipant', textInput.value);
+  //findUsers(textInput.value);
   let tablePersonList = document.querySelector('#table-person-list');
   textInput.value = ''
 }
@@ -119,7 +105,9 @@ function updatePersonTable() {
     const firstCell = newRow.insertCell();
     firstCell.innerHTML = i + 1;
     newRow.insertCell().innerHTML = receipt.userNames[id] + (i === 0 ? ' (Płatnik)' : '');
-    newRow.insertCell().innerHTML = convertToPLN(receipt.shares[id]);
+    const moneyCell = newRow.insertCell();
+    moneyCell.innerHTML = receipt.shares[id] / 100;
+    moneyCell.classList.toggle('money');
 
     let deleteCell = newRow.insertCell();
     deleteCell.innerHTML = 'Usuń';
@@ -143,8 +131,8 @@ function updateItemTable() {
     const priceCell = newRow.insertCell();
     priceCell.innerHTML = convertToPLN(new Number(item.price));
     priceCell.classList.toggle('td-money');
+    priceCell.classList.toggle('money');
 
-    console.log(`item name ${item.name}`);
     let checkboxes = newRow.insertCell();
     for(let j = receipt.personList.length - 1; j >= 0; j--) {
       let checkbox = document.createElement('input');
@@ -153,13 +141,7 @@ function updateItemTable() {
       checkbox.dataset.itemID = i;
       checkbox.dataset.payerID = receipt.personList[j];
 
-      console.log(`person: ${receipt.personList[j]}`);
-      console.log(`item payers: ${item.payers}`);
-
-
       checkbox.checked = item.payers.includes(receipt.personList[j]);
-      console.log(`includes? ${item.payers.includes(receipt.personList[j])}`);
-      //console.log(`checkbox state ${checkbox.checked}`);
 
       checkbox.setAttribute('onchange', `checkboxHandler(this);`);
       checkboxes.appendChild(checkbox);
@@ -202,6 +184,7 @@ function downloadReceiptJSON() {
       updateItemTable();
       updatePersonTable();
       updateErrorInformer();
+      formatAllMoneyClasses();
     }
   }
   httpRequest.open("GET", `updateReceipt.php?getJSON=1`, true);
@@ -211,7 +194,6 @@ function downloadReceiptJSON() {
 function checkboxHandler(checkbox) {
   const operationData = `${checkbox.dataset.itemID};${checkbox.dataset.payerID}`;
   if(checkbox.checked) {
-    console.log("set checkbox payerl");
     updateReceipt("setItemPayer", operationData);
     return;
   }

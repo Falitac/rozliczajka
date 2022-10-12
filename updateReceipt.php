@@ -17,28 +17,21 @@ function updateReceipt() {
     getJSON($newReceipt);
     return;
   }
-
   if(isset($_GET['newPrice'])) {
     $newReceipt->setPrice($_GET['newPrice']);
   }
-
   if(isset($_GET['newDate'])) {
     $newReceipt->date = date_create($_GET['newDate']);
   }
-
   if(isset($_GET['newItem'])) {
     $itemData = explode(';', $_GET['newItem']);
+
     $newItem = new Item($itemData[0], $itemData[1]);
-
-    //$newItem->addEveryoneFromReceipt($newReceipt);
-
     $newReceipt->addItem($newItem);
   }
-
   if(isset($_GET['setDescription'])) {
     $newReceipt->description = $_GET['setDescription'];
   }
-
   if(isset($_GET['setReceiptPayer'])) {
     $id = $_GET['setReceiptPayer'];
     $newReceipt->setPayerByID($id);
@@ -82,10 +75,12 @@ function updateReceipt() {
     try {
       $savedSuccessfully = $newReceipt->saveToDatabase();
     } catch (\Throwable $th) {
-      $_SESSION['receipt-error'] = "Could not save to database: $th";
+      $_SESSION['receipt-error'] = "Could not save to database\n";
     }
     if(!$savedSuccessfully) {
       $_SESSION['receipt-error'] = "Could not save to database\n";
+    } else { // should not be an error but we'll change it soon
+      $_SESSION['receipt-error'] = "Saved to database\n"; 
     }
   }
 
