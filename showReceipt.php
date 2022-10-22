@@ -21,6 +21,35 @@
     header('Location: ./');
   }
   $personCount = count($receipt->personList);
+
+  function paymentQuery($receiptID) {
+    $result = array();
+    $sql = "SELECT users.name as name, paid\n"
+      . "FROM `payments`\n"
+      . "INNER JOIN `users`\n"
+      . "ON `users`.`id` = `payments`.`user_id`\n"
+      . "WHERE `payments`.`receipt_id` = :receiptID;";
+    
+    global $pdo;
+    $queryResult = null;
+    try {
+      $queryResult = $pdo->prepare($sql);
+      $queryResult->execute(array('receiptID' => $receiptID));
+    } catch(PDOException $e) {
+      return null;
+    }
+    if(is_null($queryResult)) {
+      return null;
+    }
+    foreach($queryResult->fetchAll(PDO::FETCH_ASSOC) as $row) {
+      $result[$row['name']] = $row['paid'];
+    }
+
+    return $result;
+  }
+
+  $paymentPeopleStatus = paymentQuery($receiptID);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -64,16 +93,19 @@
                 <th>Nr</th>
                 <th>Osoba</th>
                 <th>Dług</th>
+                <th>Czy spłacony?</th>
               </tr>
               <?php
                 $number = 1;
                 foreach($receipt->personList as $person) {
                   $personName = $receipt->userNames[$person];
+                  $paymentStatus = $paymentPeopleStatus[$personName] ? "Tak" : "Nie";
               ?>
                 <tr>
                   <td><?=$number?></td>
                   <td><?= $person == $receipt->payerID ? $personName." (płatnik)" : $personName ?></td>
                   <td class="money td-money"><?=$receipt->shares[$person] / 100?></td>
+                  <td><?=$paymentStatus?></td>
                 </tr>
               <?php $number++; } ?>
             </table>
