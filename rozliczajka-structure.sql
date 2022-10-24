@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 09 Maj 2022, 15:38
+-- Czas generowania: 24 Paź 2022, 14:18
 -- Wersja serwera: 10.4.22-MariaDB
 -- Wersja PHP: 8.1.2
 
@@ -69,7 +69,8 @@ CREATE TABLE `payments` (
   `receipt_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `paid` tinyint(1) NOT NULL DEFAULT 0,
-  `value` bigint(20) NOT NULL
+  `value` bigint(20) NOT NULL,
+  `date` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -83,6 +84,7 @@ CREATE TABLE `receipts` (
   `date` date NOT NULL,
   `price` int(11) NOT NULL,
   `payer_id` int(11) NOT NULL,
+  `image` varchar(80) DEFAULT NULL,
   `description` varchar(800) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

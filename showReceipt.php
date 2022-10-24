@@ -93,19 +93,21 @@
                 <th>Nr</th>
                 <th>Osoba</th>
                 <th>Dług</th>
-                <th>Czy spłacony?</th>
+                <th>Spłacony?</th>
               </tr>
               <?php
                 $number = 1;
                 foreach($receipt->personList as $person) {
                   $personName = $receipt->userNames[$person];
-                  $paymentStatus = $paymentPeopleStatus[$personName] ? "Tak" : "Nie";
+                  $paymentStatus = $paymentPeopleStatus[$personName];
+                  $paymentStatusContent =  $paymentStatus ? "✔" : "✖";
+                  $paymentStatusCol = $paymentStatus ? "good-col" : "bad-col";
               ?>
                 <tr>
                   <td><?=$number?></td>
                   <td><?= $person == $receipt->payerID ? $personName." (płatnik)" : $personName ?></td>
                   <td class="money td-money"><?=$receipt->shares[$person] / 100?></td>
-                  <td><?=$paymentStatus?></td>
+                  <td class="<?=$paymentStatusCol?>"><?=$paymentStatusContent?></td>
                 </tr>
               <?php $number++; } ?>
             </table>

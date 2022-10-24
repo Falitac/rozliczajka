@@ -13,6 +13,12 @@
   padding: 0;
 }
 
+:root {
+  --good-col: #60d32a;
+  --neutral-col: #efef51;
+  --bad-col: #ff692e;
+}
+
 ::selection {
   background: #3d199e;
 }
@@ -231,7 +237,7 @@ input[type=date], #form-receipt-price {
 input[type="checkbox"].person-checkbox {
   -webkit-appearance: none;
   appearance: none;
-  background-color: #9a2323;
+  background-color: var(--bad-col);
   float: right;
   margin: 0.1em 0.1em;
   width: 1em;
@@ -259,7 +265,7 @@ input[type="checkbox"].person-checkbox:checked::before {
 }
 
 input[type="checkbox"].person-checkbox:checked {
-  background-color: green;
+  background-color: var(--good-col);
 }
 
 input#form-receipt-price::before {
@@ -361,7 +367,6 @@ div.receipt-left-side {
   margin-right: 25%;
 }
 
-
 textarea {
   box-sizing: border-box;
   margin-top: 2vh;
@@ -450,4 +455,16 @@ div#error-informer {
   padding: .3em .6em;
   max-width: 310px;
   margin: auto;
+}
+
+.good-col {
+  color:#60d32a;
+}
+
+.neutral-col {
+  color:#efef51;
+}
+
+.bad-col {
+  color:#ff692e;
 }
