@@ -199,7 +199,6 @@ select {
 input[type=submit] {
   background-color: #303030;
   border-radius: 15px;
-  border-style
   width: calc(45% - 1.4em);
   padding: 0.7em;
   text-align: right;
@@ -230,10 +229,10 @@ input[type=text].table-text-input {
 }
 
 input[type=date], #form-receipt-price {
-  width: 200px;
+  width: 100%;
   display: block;
-  border: 2px #6b6b6b solid;
   text-align: right;
+  background-color: #333;
 }
 
 input[type="checkbox"].person-checkbox {
@@ -293,6 +292,8 @@ a:hover {
 
 table {
   border-collapse: collapse;
+  border-radius: 15px;
+  box-shadow: #222 0 0 15px;
 }
 
 table#table-person-list {
@@ -392,9 +393,10 @@ textarea {
   padding: 10px;
   max-width: 100%;
   line-height: 1.5;
-  border: 1px solid #ccc;
+  border: none !important;
   border-radius: 15px;
   resize: none;
+  outline: none !important;
 
   background-color: #161616;
   color: #eee;
@@ -402,8 +404,9 @@ textarea {
 }
 
 textarea:focus, input:focus {
-  outline: none !important;
-  border: #96fffa 1px solid;
+  box-sizing: border-box;
+  /* outline: none !important; */
+  outline: #3e7eb3 1px solid !important;
   transition: 0.3s all;
 }
 
