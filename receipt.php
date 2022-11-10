@@ -117,6 +117,10 @@ class Receipt {
     return $this->price;
   }
 
+  public function getItem($itemID) {
+    return $this->itemList[$itemID];
+  }
+
   public function addItem($item) {
     $this->itemList[] = $item;
   }

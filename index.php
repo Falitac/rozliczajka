@@ -2,6 +2,7 @@
   include_once('database.php');
   include_once('utility.php');
   include_once('receipt.php');
+  include_once('message.php');
   session_start();
   $login_error = NULL;
 
@@ -33,6 +34,7 @@
         $_SESSION['logged'] = true;
         $_SESSION['login-id'] = $row['id'];
         $_SESSION['login-name'] = $row['name'];
+        $_SESSION['main-message-presenter'] = serialize(new MessagePresenter());
       } else {
         $login_error = 'Błędne hasło';
         session_destroy();
@@ -53,6 +55,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link href="/css/main.css" rel="stylesheet">
+  <link href="/css/queueMessage.css" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
   <title>Rozliczajka</title>
 </head>
@@ -84,19 +87,10 @@
         </div>
       <?php } else { ?>
         <?php
-          if(isset($_SESSION['receipt-error'])) { ?>
-            <div style="color: red;">
-              <?=$_SESSION['receipt-error'];?>
-            </div>
-        <?php
-            unset($_SESSION['receipt-error']);
-          }
-          if(isset($_SESSION['errors'])) {
-            foreach($_SESSION['errors'] as $errorMessage) { ?>
-            <div class="error-list"><?=$errorMessage;?></div>
-        <?php
-            }
-          unset($_SESSION['errors']);
+          if(isset($_SESSION['main-message-presenter'])) {
+            $messagePresenter = unserialize($_SESSION['main-message-presenter']);
+            $messagePresenter->print();
+            $_SESSION['main-message-presenter'] = serialize($messagePresenter);
           }
         ?>
 
