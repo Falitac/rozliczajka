@@ -121,22 +121,27 @@
             <tr>
               <th>Przedmiot</th>
               <th>Cena</th>
-              <th>Płatnicy</th>
+              <th colspan="<?=count($receipt->personList)?>">Płatnicy</th>
             </tr>
             <?php
               foreach($receipt->itemList as $item) {
+                $itemParticipantPrice = ceil($item->price / count($receipt->personList)) / 100;
             ?>
             <tr>
               <td><?=$item->name?></td>
               <td class="money td-money"><?=$item->price / 100?></td>
-              <td>
-                <?php
-                  for($i = $personCount - 1; $i >= 0; $i--) {
-                    $personContained = in_array($receipt->personList[$i], $item->payers);
-                ?>
-                <input type="checkbox" class="person-checkbox" <?= $personContained ? "checked" : ""?> onclick="return false;">
-                <?php } ?>
-              </td>
+              <?php
+                for($i = 0; $i < count($receipt->personList); $i++) {
+                  $personContained = in_array($receipt->personList[$i], $item->payers);
+                  $itemPriceInclude = 0;
+                  $informColor = "";
+                  if($personContained) {
+                    $itemPriceInclude = $itemParticipantPrice;
+                    $informColor = "color: var(--good-col);";
+                  }
+              ?>
+              <td class="money td-money" style="<?=$informColor?>"><?=$itemPriceInclude?></td>
+              <?php } ?>
             </tr>
             <?php } ?>
           </table>

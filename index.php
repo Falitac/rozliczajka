@@ -103,7 +103,7 @@
 
         <div class="receipt-list fancy-border" style="margin-top: 3vh;">
           <h1>Paragony</h1>
-          <div style="display: flex; justify-content: space-between;">
+          <div class="container-receipt-list">
             <div>
               <?php require_once('receiptTable.php');?>
             </div>

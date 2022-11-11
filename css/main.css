@@ -229,7 +229,6 @@ input[type=text].table-text-input {
 }
 
 input[type=date], #form-receipt-price {
-  width: 100%;
   display: block;
   text-align: right;
   background-color: #333;
@@ -285,6 +284,13 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.container-receipt-list {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
 
 /*
  * Table format
@@ -378,7 +384,18 @@ table tr td.not-paid::before {
 }
 
 div.receipt-left-side {
-  margin-right: 25%;
+  margin-right: 15%;
+}
+
+.container-price-date {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 20px;
+  justify-items: stretch;
+}
+
+.receipt-price-item, .receipt-date-item {
+  width: 90%;
 }
 
 textarea {
