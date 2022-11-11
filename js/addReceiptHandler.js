@@ -145,18 +145,32 @@ function updateItemTable() {
     priceCell.classList.toggle('td-money');
     priceCell.classList.toggle('money');
 
-    let checkboxes = newRow.insertCell();
-    for(let j = receipt.personList.length - 1; j >= 0; j--) {
-      let checkbox = document.createElement('input');
-      checkbox.setAttribute('type', 'checkbox');
-      checkbox.classList.toggle('person-checkbox');
+    //let checkboxes = newRow.insertCell();
+    //checkboxes.setAttribute('colspan', receipt.personList.length);
+    let participantItemPrice = 0;
+    if(item.payers.length !== 0) {
+      participantItemPrice = convertToPLN(item.price / item.payers.length);
+    }
+
+    for(let j = 0; j < receipt.personList.length; j++) {
+      const checkbox = newRow.insertCell();
+      checkbox.classList.toggle('money');
+      checkbox.classList.toggle('td-money');
+      checkbox.innerHTML = 0;
+      checkbox.style.color = 'white';
+      checkbox.style.width = '70px';
+      checkbox.style.borderRight = checkbox.style.borderLeft = '1px #fff solid';
+
+      const includesThisPerson = item.payers.includes(receipt.personList[j])
+      if(includesThisPerson) {
+        checkbox.innerHTML = participantItemPrice;
+        checkbox.style.color = 'var(--good-col)';
+        checkbox.classList.toggle('item-checkbox-active');
+      }
+
       checkbox.dataset.itemID = i;
       checkbox.dataset.payerID = receipt.personList[j];
-
-      checkbox.checked = item.payers.includes(receipt.personList[j]);
-
-      checkbox.setAttribute('onchange', `checkboxHandler(this);`);
-      checkboxes.appendChild(checkbox);
+      checkbox.setAttribute('onclick', 'checkboxHandler(this)');
     }
 
     let deleteCell = newRow.insertCell();
@@ -180,7 +194,6 @@ function updateItemTable() {
   divisionCell.innerHTML = division;
   divisionCell.setAttribute('colspan', receipt.personList.length);
   divisionCell.classList.toggle('money');
-  divisionCell.classList.toggle('td-money');
 
   lastRow.insertCell();
 }
@@ -216,7 +229,7 @@ function updateErrorInformer() {
 
 function checkboxHandler(checkbox) {
   const operationData = `${checkbox.dataset.itemID};${checkbox.dataset.payerID}`;
-  if(checkbox.checked) {
+  if(!checkbox.classList.contains('item-checkbox-active')) {
     updateReceipt("setItemPayer", operationData);
     return;
   }

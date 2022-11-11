@@ -329,11 +329,11 @@ table tr:first-child th:first-child{
 }
 
 table tr:nth-child(odd) {
-  background-color: #2c2c2c;
+  background-color: #31323d;
 }
 
 table tr {
-  background-color: #3b3b3b;
+  background-color: #1b1717;
 }
 
 table tr:not(tr:first-child):hover{
@@ -399,6 +399,7 @@ textarea {
   outline: none !important;
 
   background-color: #161616;
+  /* background-color: #292929; */
   color: #eee;
   transition: 0.3s all;
 }
