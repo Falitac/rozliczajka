@@ -50,9 +50,9 @@ function updateReceipt() {
       $messagePresenter->addMessage(new Message("Could not save to database (database error)\n", MessageType::Error));
     }
     if(!$savedSuccessfully) {
-      $messagePresenter->addMessage(new Message("Could not save to database()\n", MessageType::Error));
+      $messagePresenter->addMessage(new Message("Nie udało się zapisać paragonu do bazy :(", MessageType::Error));
     } else { // should not be an error but we'll change it soon
-      $messagePresenter->addMessage(new Message("Saved to database\n", MessageType::Info));
+      $messagePresenter->addMessage(new Message("Paragon zapisany", MessageType::Info));
     }
     $_SESSION['main-message-presenter'] = serialize($messagePresenter);
   }

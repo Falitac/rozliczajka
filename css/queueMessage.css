@@ -1,10 +1,20 @@
 
+@keyframes fading {
+  0% {top: -20vh;}
+  50% {opacity: 1; top: 10vh;}
+  95% {opacity: 0;}
+  100% {top: -30vh;}
+}
+
 div.messages-queue {
+  animation: fading 7s cubic-bezier(0.230, 1.000, 0.320, 1.000);
+  animation-iteration-count: 1;
   position: fixed;
-  top: 10vh;
+  top: -100vh;
   left: 0;
   right: 0;
 
+  box-shadow: #000 0 0 15px;
   background-color: #ffffffee;
   margin-left: auto;
   margin-right: auto;

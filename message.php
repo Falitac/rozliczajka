@@ -71,7 +71,7 @@ class MessagePresenter {
     }
 
     echo '<div class="messages-queue">';
-    echo '<h2>Nowe notyfikacje</h2>';
+    echo '<h2>Powiadomienia</h2>';
     foreach($this->messageQueue as &$message ) {
       $message->print();
       $message->setAsRead();
