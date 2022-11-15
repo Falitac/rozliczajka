@@ -6,6 +6,7 @@ if(!isSessionStarted()) {
 include_once('database.php');
 include_once('receipt.php');
 include_once('checkIfLogged.php');
+include_once('message.php');
 
 if(isset($_GET['receiptID'])) {
   removeReceipt(intval($_GET['receiptID']));
@@ -16,10 +17,13 @@ function removeReceipt($receiptID) {
   $receipt = new Receipt();
   $receipt->getFromDatabase($receiptID);
 
+  $mainMessagePresenter = unserialize($_SESSION['main-message-presenter']);
+
   if(!$receipt->removeFromDatabase(intval($_SESSION['login-id']), $receiptID)) {
-    $_SESSION['errors'][] = 'Nieudana operacja usunięcia paragonu';
+    $mainMessagePresenter->addMessage(new Message('Nieudana operacja usunięcia paragonu', MessageType::Error));
   } else {
-    $_SESSION['errors'][] = 'Pomyślny wynik operacji usunięcia paragonu';
+    $mainMessagePresenter->addMessage(new Message('Pomyślny wynik operacji usunięcia paragonu'));
   }
+  $_SESSION['main-message-presenter'] = serialize($mainMessagePresenter);
 }
 ?>

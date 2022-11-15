@@ -1,0 +1,56 @@
+
+@keyframes fading {
+  0% {top: -20vh;}
+  50% {opacity: 1; top: 10vh;}
+  95% {opacity: 0;}
+  100% {top: -30vh;}
+}
+
+div.messages-queue {
+  animation: fading 7s cubic-bezier(0.230, 1.000, 0.320, 1.000);
+  animation-iteration-count: 1;
+  position: fixed;
+  top: -100vh;
+  left: 0;
+  right: 0;
+
+  box-shadow: #000 0 0 15px;
+  background-color: #ffffffee;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1.5rem 0 1.5rem;
+  width: 20%;
+  border-radius: 15px;
+}
+
+div.messages-queue h2 {
+  text-align: center;
+  color: #000;
+}
+
+div.messages-queue-item {
+  font-weight: bolder;
+  text-align: center;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+
+div.messages-queue-item span {
+  text-align: right;
+}
+
+div.messages-queue div.message-info {
+  color: green;
+}
+
+div.messages-queue div.message-error {
+  color: red;
+}
+
+div.messages-queue div.message-warning {
+  color: orange;
+}
+
+div.messages-queue div.message-other {
+  color: pink;
+}
