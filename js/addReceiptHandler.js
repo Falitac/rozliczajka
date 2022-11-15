@@ -145,11 +145,9 @@ function updateItemTable() {
     priceCell.classList.toggle('td-money');
     priceCell.classList.toggle('money');
 
-    //let checkboxes = newRow.insertCell();
-    //checkboxes.setAttribute('colspan', receipt.personList.length);
     let participantItemPrice = 0;
     if(item.payers.length !== 0) {
-      participantItemPrice = convertToPLN(item.price / item.payers.length);
+      participantItemPrice = convertToPLN(Math.floor(item.price / item.payers.length));
     }
 
     for(let j = 0; j < receipt.personList.length; j++) {

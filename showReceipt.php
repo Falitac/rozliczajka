@@ -125,7 +125,7 @@
             </tr>
             <?php
               foreach($receipt->itemList as $item) {
-                $itemParticipantPrice = ceil($item->price / count($item->payers)) / 100;
+                $itemParticipantPrice = floor($item->price / count($item->payers)) / 100;
             ?>
             <tr>
               <td><?=$item->name?></td>
