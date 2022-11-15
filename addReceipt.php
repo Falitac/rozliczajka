@@ -38,19 +38,20 @@
       <div class="receipt-info">
         <div class="receipt-left-side">
           <form>
-            <div style="float: left;">
-              <label>
-                <h2>Kwota:</h2>
-              </label>
-              <input type="number" id="form-receipt-price" inputmode="decimal" value="<?=$newReceipt->getPrice()/100?>" oninput="onNumberChange(this);updateReceiptPrice(this)" onclick="this.select();"></input>
+            <div class="container-price-date">
+              <div class="receipt-price-item">
+                <label>
+                  <h2>Kwota:</h2>
+                </label>
+                <input type="number" id="form-receipt-price" inputmode="decimal" value="<?=$newReceipt->getPrice()/100?>" oninput="onNumberChange(this);updateReceiptPrice(this)" onclick="this.select();"></input>
+              </div>
+              <div class="receipt-date-item">
+                <label>
+                  <h2>Data:</h2>
+                </label>
+                <input type="date" id="form-receipt-date" oninput="updateReceipt('newDate', this.value)"></input>
+              </div>
             </div>
-            <div style="float: right;">
-              <label>
-                <h2>Data:</h2>
-              </label>
-              <input type="date" id="form-receipt-date" oninput="updateReceipt('newDate', this.value)"></input>
-            </div>
-            <div style="clear: both;"></div>
             <label>
               <h2>Lista osób:</h2>
             </label>
@@ -69,7 +70,7 @@
                 </td>
               </tr>
             </table>
-            <textarea id="receipt-description" onchange="updateReceipt('setDescription', this.value)" placeholder="Opis paragonu, przedmiotów, uwagi"></textarea>
+            <textarea id="receipt-description" onchange="updateReceipt('setDescription', encodeURIComponent(this.value));" placeholder="Opis paragonu, przedmiotów, uwagi"></textarea>
             <div id="error-informer"></div>
           </form>
         </div>

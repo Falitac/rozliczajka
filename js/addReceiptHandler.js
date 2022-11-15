@@ -6,6 +6,9 @@ if(receipt === null) {
   downloadReceiptJSON();
 }
 
+fillTodayDate();
+downloadReceiptJSON();
+
 function fillTodayDate() {
   const formDate = document.querySelector("#form-receipt-date");
   let today = new Date().toJSON().slice(0,10);
@@ -27,10 +30,6 @@ function onNumberChange(input) {
   }
 }
 
-function updateReceiptPrice(input) {
-  updateReceipt('newPrice', convertToGrosz(input.value));
-}
-
 function updateReceipt(attribute, value) {
   let httpRequest = new XMLHttpRequest();
 
@@ -47,6 +46,10 @@ function updateReceipt(attribute, value) {
   }
   httpRequest.open("GET", `updateReceipt.php?${attribute}=${value}`, true);
   httpRequest.send();
+}
+
+function updateReceiptPrice(input) {
+  updateReceipt('newPrice', convertToGrosz(input.value));
 }
 
 function findUsers(name) {
@@ -90,6 +93,108 @@ function addItemToList(textInput) {
   itemName.select();
 }
 
+function downloadReceiptJSON() {
+  let httpRequest = new XMLHttpRequest();
+  httpRequest.onreadystatechange = () => {
+    if(httpRequest.readyState == 4 && httpRequest.status == 200) {
+      receipt = JSON.parse(httpRequest.responseText);
+      console.log(receipt);
+
+      updateInfoPrice();
+      updateDescription();
+      updateItemTable();
+      updatePersonTable();
+      updateErrorInformer();
+      formatAllMoneyClasses();
+    }
+  }
+  httpRequest.open("GET", `updateReceipt.php?getJSON=1`, true);
+  httpRequest.send();
+}
+
+function updateInfoPrice() {
+  const priceInput = document.querySelector('#form-receipt-price');
+  const serverReceiptPrice = convertToPLN(receipt.price);
+}
+
+function updateDescription() {
+  const descriptionInput = document.querySelector('#receipt-description');
+  descriptionInput.innerHTML = receipt.description;
+}
+
+function updateItemTable() {
+  let tableItemList = document.querySelector('#table-item-list');
+
+  let rowCount = tableItemList.rows.length;
+  for(let i = 1; i < rowCount - 1; i++) {
+    tableItemList.rows[1].remove();
+  }
+  tableItemList.rows[0].cells[2].setAttribute('colspan', receipt.personList.length);
+
+  let restSum = receipt.price;
+
+  for(let i = receipt.itemList.length - 1; i >= 0; i--) {
+    let item = receipt.itemList[i];
+    let newRow = tableItemList.insertRow(1);
+
+    restSum -= item.price;
+
+    newRow.insertCell().innerHTML = item.name;
+    const priceCell = newRow.insertCell();
+    priceCell.innerHTML = convertToPLN(item.price);
+    priceCell.classList.toggle('td-money');
+    priceCell.classList.toggle('money');
+
+    let participantItemPrice = 0;
+    if(item.payers.length !== 0) {
+      participantItemPrice = convertToPLN(Math.floor(item.price / item.payers.length));
+    }
+
+    for(let j = 0; j < receipt.personList.length; j++) {
+      const checkbox = newRow.insertCell();
+      checkbox.classList.toggle('money');
+      checkbox.classList.toggle('td-money');
+      checkbox.innerHTML = 0;
+      checkbox.style.color = 'white';
+      checkbox.style.width = '70px';
+      checkbox.style.borderRight = checkbox.style.borderLeft = '1px #fff solid';
+
+      const includesThisPerson = item.payers.includes(receipt.personList[j])
+      if(includesThisPerson) {
+        checkbox.innerHTML = participantItemPrice;
+        checkbox.style.color = 'var(--good-col)';
+        checkbox.classList.toggle('item-checkbox-active');
+      }
+
+      checkbox.dataset.itemID = i;
+      checkbox.dataset.payerID = receipt.personList[j];
+      checkbox.setAttribute('onclick', 'checkboxHandler(this)');
+    }
+
+    let deleteCell = newRow.insertCell();
+    deleteCell.innerHTML = 'Usuń';
+    deleteCell.setAttribute('onclick', `updateReceipt('removeItem', ${i});`);
+
+    newRow.dataset.itemID = i;
+  }
+
+  const division = convertToPLN(Math.floor(restSum / receipt.personList.length));
+
+  const lastRow = tableItemList.insertRow(1);
+  lastRow.insertCell().innerHTML = "<b>Reszta przedmiotów</b>";
+
+  const priceCell = lastRow.insertCell();
+  priceCell.innerHTML = convertToPLN(restSum);
+  priceCell.classList.toggle('money');
+  priceCell.classList.toggle('td-money');
+
+  const divisionCell = lastRow.insertCell();
+  divisionCell.innerHTML = division;
+  divisionCell.setAttribute('colspan', receipt.personList.length);
+  divisionCell.classList.toggle('money');
+
+  lastRow.insertCell();
+}
 
 function updatePersonTable() {
   let tablePersonList = document.querySelector('#table-person-list');
@@ -115,85 +220,14 @@ function updatePersonTable() {
   }
 }
 
-function updateItemTable() {
-  let tableItemList = document.querySelector('#table-item-list');
-
-  let rowCount = tableItemList.rows.length;
-  for(let i = 1; i < rowCount - 1; i++) {
-    tableItemList.rows[1].remove();
-  }
-
-  for(let i = receipt.itemList.length - 1; i >= 0; i--) {
-    let item = receipt.itemList[i];
-    let newRow = tableItemList.insertRow(1);
-
-    newRow.insertCell().innerHTML = item.name;
-    const priceCell = newRow.insertCell();
-    priceCell.innerHTML = convertToPLN(new Number(item.price));
-    priceCell.classList.toggle('td-money');
-    priceCell.classList.toggle('money');
-
-    let checkboxes = newRow.insertCell();
-    for(let j = receipt.personList.length - 1; j >= 0; j--) {
-      let checkbox = document.createElement('input');
-      checkbox.setAttribute('type', 'checkbox');
-      checkbox.classList.toggle('person-checkbox');
-      checkbox.dataset.itemID = i;
-      checkbox.dataset.payerID = receipt.personList[j];
-
-      checkbox.checked = item.payers.includes(receipt.personList[j]);
-
-      checkbox.setAttribute('onchange', `checkboxHandler(this);`);
-      checkboxes.appendChild(checkbox);
-    }
-
-    let deleteCell = newRow.insertCell();
-    deleteCell.innerHTML = 'Usuń';
-    deleteCell.setAttribute('onclick', `updateReceipt('removeItem', ${i});`);
-
-    newRow.dataset.itemID = i;
-  }
-}
-
-function updateInfoPrice() {
-  const priceInput = document.querySelector('#form-receipt-price');
-
-  const serverReceiptPrice = convertToPLN(receipt.price);
-  //priceInput.value = serverReceiptPrice;
-}
-
-function updateDescription() {
-  const descriptionInput = document.querySelector('#receipt-description');
-  descriptionInput.innerHTML = receipt.description;
-}
-
 function updateErrorInformer() {
   const errorInformer = document.querySelector('#error-informer');
   errorInformer.innerHTML = receipt.errorInformer;
 }
 
-function downloadReceiptJSON() {
-  let httpRequest = new XMLHttpRequest();
-  httpRequest.onreadystatechange = () => {
-    if(httpRequest.readyState == 4 && httpRequest.status == 200) {
-      receipt = JSON.parse(httpRequest.responseText);
-      console.log(receipt);
-
-      updateInfoPrice();
-      updateDescription();
-      updateItemTable();
-      updatePersonTable();
-      updateErrorInformer();
-      formatAllMoneyClasses();
-    }
-  }
-  httpRequest.open("GET", `updateReceipt.php?getJSON=1`, true);
-  httpRequest.send();
-}
-
 function checkboxHandler(checkbox) {
   const operationData = `${checkbox.dataset.itemID};${checkbox.dataset.payerID}`;
-  if(checkbox.checked) {
+  if(!checkbox.classList.contains('item-checkbox-active')) {
     updateReceipt("setItemPayer", operationData);
     return;
   }
@@ -203,7 +237,4 @@ function checkboxHandler(checkbox) {
 function receiptSubmitToDatabase(input) {
   updateReceipt('saveToDatabase', '1');
 }
-
-fillTodayDate();
-downloadReceiptJSON();
 
