@@ -42,7 +42,11 @@ function truncateStringValueTo2Decimal(num) {
 }
 
 function onNumberChange(input) {
-  input.value = truncateStringValueTo2Decimal(input.value)
+  const truncated = truncateStringValueTo2Decimal(input.value);
+
+  if(truncated !== input.value) {
+    input.value = truncated;
+  }
 }
 
 function updateReceipt(attribute, value) {
