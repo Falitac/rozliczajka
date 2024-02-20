@@ -48,6 +48,10 @@ function updateReceipt(attribute, value) {
   httpRequest.send();
 }
 
+function performOCR() {
+  updateReceipt("performOCR", "1");
+}
+
 function updateReceiptPrice(input) {
   updateReceipt('newPrice', convertToGrosz(input.value));
 }
@@ -75,9 +79,6 @@ function addPersonToList(textInput) {
   //findUsers(textInput.value);
   let tablePersonList = document.querySelector('#table-person-list');
   textInput.value = ''
-}
-
-function deleteUserFromList(something) {
 }
 
 function addItemToList(textInput) {
@@ -139,11 +140,20 @@ function updateItemTable() {
 
     restSum -= item.price;
 
-    newRow.insertCell().innerHTML = item.name;
+    const nameCell = newRow.insertCell();
+    nameCell.innerHTML = item.name;
+    nameCell.contentEditable = true;
+    nameCell.addEventListener("input", (event) => {
+      console.log(`Yo: ${event}`);
+      console.log(event);
+
+    }, false);
+
     const priceCell = newRow.insertCell();
     priceCell.innerHTML = convertToPLN(item.price);
     priceCell.classList.toggle('td-money');
     priceCell.classList.toggle('money');
+    priceCell.contentEditable = true;
 
     let participantItemPrice = 0;
     if(item.payers.length !== 0) {
