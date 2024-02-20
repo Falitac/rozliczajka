@@ -23,11 +23,26 @@ function convertToPLN(value) {
   return value / 100;
 }
 
-function onNumberChange(input) {
-  let commaPos = input.value.indexOf('.');
-  if(commaPos !== -1 && input.value.substring(commaPos).length > 3) {
-    input.value = input.value.substring(0, commaPos + 3);
+function truncateStringValueTo2Decimal(num) {
+  let dotPos = num.indexOf('.');
+  let commaPos = num.indexOf(',');
+  
+  if(dotPos === -1) {
+    dotPos = commaPos;
   }
+  if(dotPos === -1) {
+    return num;
+  }
+
+  if(num.substring(dotPos).length > 3) {
+    num = num.substring(0, dotPos + 3);
+  }
+
+  return num;
+}
+
+function onNumberChange(input) {
+  input.value = truncateStringValueTo2Decimal(input.value)
 }
 
 function updateReceipt(attribute, value) {
@@ -54,6 +69,11 @@ function performOCR() {
 
 function updateReceiptPrice(input) {
   updateReceipt('newPrice', convertToGrosz(input.value));
+}
+
+function updateItemPrice(itemID, newPrice) {
+  const operationData = `${itemID};${newPrice}`;
+  updateReceipt('setItemPrice', operationData);
 }
 
 function findUsers(name) {
@@ -154,6 +174,14 @@ function updateItemTable() {
     priceCell.classList.toggle('td-money');
     priceCell.classList.toggle('money');
     priceCell.contentEditable = true;
+    priceCell.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+          event.preventDefault();
+          let newPrice = this.innerText.replace(/[^\d.]/g, '');
+          newPrice = truncateStringValueTo2Decimal(newPrice).replace('.', '');
+          updateItemPrice(i, newPrice);
+      }
+    });
 
     let participantItemPrice = 0;
     if(item.payers.length !== 0) {

@@ -100,6 +100,15 @@ function updateItemInfo($newReceipt) {
   if(isset($_GET['removeItem'])) {
     $newReceipt->removeItem($_GET['removeItem']);
   }
+  if(isset($_GET['setItemPrice'])) {
+    $data = explode(';', $_GET['setItemPrice']);
+    if(count($data) !== 2) {
+      return;
+    }
+
+    $item = &$newReceipt->getItem($data[0]);
+    $item->setPrice($data[1]);
+  }
 
 }
 
