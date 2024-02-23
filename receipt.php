@@ -288,7 +288,7 @@ class Receipt {
         "receipt_id" => $receiptID,
         "user_id" => $userID,
         "value" => $price,
-        "paid" => $userID === $this->payerID
+        "paid" => $userID === $this->payerID ? 1 : 0
       );
       $result = $pdo->prepare($query);
       $result->execute($values);
