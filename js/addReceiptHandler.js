@@ -23,10 +23,29 @@ function convertToPLN(value) {
   return value / 100;
 }
 
+function truncateStringValueTo2Decimal(num) {
+  let dotPos = num.indexOf('.');
+  let commaPos = num.indexOf(',');
+  
+  if(dotPos === -1) {
+    dotPos = commaPos;
+  }
+  if(dotPos === -1) {
+    return num;
+  }
+
+  if(num.substring(dotPos).length > 3) {
+    num = num.substring(0, dotPos + 3);
+  }
+
+  return num;
+}
+
 function onNumberChange(input) {
-  let commaPos = input.value.indexOf('.');
-  if(commaPos !== -1 && input.value.substring(commaPos).length > 3) {
-    input.value = input.value.substring(0, commaPos + 3);
+  const truncated = truncateStringValueTo2Decimal(input.value);
+
+  if(truncated !== input.value) {
+    input.value = truncated;
   }
 }
 
@@ -48,8 +67,17 @@ function updateReceipt(attribute, value) {
   httpRequest.send();
 }
 
+function performOCR() {
+  updateReceipt("performOCR", "1");
+}
+
 function updateReceiptPrice(input) {
   updateReceipt('newPrice', convertToGrosz(input.value));
+}
+
+function updateItemPrice(itemID, newPrice) {
+  const operationData = `${itemID};${newPrice}`;
+  updateReceipt('setItemPrice', operationData);
 }
 
 function findUsers(name) {
@@ -75,9 +103,6 @@ function addPersonToList(textInput) {
   //findUsers(textInput.value);
   let tablePersonList = document.querySelector('#table-person-list');
   textInput.value = ''
-}
-
-function deleteUserFromList(something) {
 }
 
 function addItemToList(textInput) {
@@ -139,11 +164,28 @@ function updateItemTable() {
 
     restSum -= item.price;
 
-    newRow.insertCell().innerHTML = item.name;
+    const nameCell = newRow.insertCell();
+    nameCell.innerHTML = item.name;
+    nameCell.contentEditable = true;
+    nameCell.addEventListener("input", (event) => {
+      console.log(`Yo: ${event}`);
+      console.log(event);
+
+    }, false);
+
     const priceCell = newRow.insertCell();
     priceCell.innerHTML = convertToPLN(item.price);
     priceCell.classList.toggle('td-money');
     priceCell.classList.toggle('money');
+    priceCell.contentEditable = true;
+    priceCell.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+          event.preventDefault();
+          let newPrice = this.innerText.replace(/[^\d.]/g, '');
+          newPrice = truncateStringValueTo2Decimal(newPrice).replace('.', '');
+          updateItemPrice(i, newPrice);
+      }
+    });
 
     let participantItemPrice = 0;
     if(item.payers.length !== 0) {

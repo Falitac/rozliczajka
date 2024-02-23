@@ -104,6 +104,7 @@
             type="file"
             name="receipt-image"
             accept="image/*"/>
+        <input type="button" value="Wykonaj OCR" onclick="performOCR();"/>
         <div class="receipt-preview">
           <p>Brak zdjęcia</p>
         </div>

@@ -2,6 +2,7 @@
 require_once('receipt.php');
 require_once('account.php');
 require_once('message.php');
+require_once('globals.php');
 session_start();
 
 function updateReceipt() {
@@ -40,6 +41,10 @@ function updateReceipt() {
 
   updateUserInfo($newReceipt);
   updateItemInfo($newReceipt);
+
+  if(isset($_GET['performOCR'])) {
+    performOCR($newReceipt);
+  }
 
   if(isset($_GET['saveToDatabase'])) {
     $savedSuccessfully = NULL;
@@ -95,7 +100,66 @@ function updateItemInfo($newReceipt) {
   if(isset($_GET['removeItem'])) {
     $newReceipt->removeItem($_GET['removeItem']);
   }
+  if(isset($_GET['setItemPrice'])) {
+    $data = explode(';', $_GET['setItemPrice']);
+    if(count($data) !== 2) {
+      return;
+    }
 
+    $item = &$newReceipt->getItem($data[0]);
+    $item->setPrice($data[1]);
+  }
+
+}
+
+function performOCR($receipt) {
+  echo "Trying to perform OCR<br>";
+
+  $filename = RECEIPTS_IMG_LOCATION.$receipt->imageName;
+  if(!file_exists($filename)) {
+    return;
+  }
+
+  echo "File exists, performing OCR<br>";
+  $ocrResult = receiptOCR($filename);
+  $items = $ocrResult->receipts[0]->items;
+  echo "<pre>";
+  foreach($items as $item) {
+    $itemName = htmlspecialchars($item->description);
+    $itemPrice = $item->amount * 100;
+
+    $newItem = new Item($itemName, $itemPrice);
+    $newItem->addEveryoneFromReceipt($receipt);
+    $receipt->addItem($newItem);
+  }
+  echo "</pre>";
+}
+
+function receiptOCR($imageFile) {
+  $receiptOcrEndpoint = 'https://ocr.asprise.com/api/v1/receipt'; //
+
+  $ch = curl_init();
+  curl_setopt($ch, CURLOPT_URL, $receiptOcrEndpoint);
+  curl_setopt($ch, CURLOPT_POST, true);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+  curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+   'api_key' => 'TEST',      // Use 'TEST' for testing purpose
+    'recognizer' => 'auto',     // can be 'US', 'CA', 'JP', 'SG' or 'auto'
+    'ref_no' => 'ocr_php_123',  // optional caller provided ref code
+    'file' => curl_file_create($imageFile) // the image file
+  ));
+
+  $result = curl_exec($ch);
+  if(curl_errno($ch)){
+      throw new Exception(curl_error($ch));
+  }
+
+  return json_decode($result);
+}
+
+function mockupReceiptOCR($imageFile) {
+  return json_decode(file_get_contents("13.02.json"));
 }
 
 function getJSON($receipt) {
