@@ -21,7 +21,9 @@ function handler() {
     $newReceipt->setImageName($imageName);
     $_SESSION['new-receipt'] = serialize($newReceipt);
     echo "Zapisałem: " . $imageName;
+    return;
   }
+  echo "Nie udało się :(";
 }
 
 function uploadImage() {
@@ -34,6 +36,7 @@ function uploadImage() {
   if(move_uploaded_file($file['tmp_name'], RECEIPTS_IMG_LOCATION . $name)) {
     return $name;
   }
+  var_dump($file['tmp_name']);
   return null;
 }
 

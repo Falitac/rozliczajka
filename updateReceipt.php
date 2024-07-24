@@ -52,7 +52,7 @@ function updateReceipt() {
     try {
       $savedSuccessfully = $newReceipt->saveToDatabase();
     } catch (\Throwable $th) {
-      $messagePresenter->addMessage(new Message("Could not save to database (database error)\n", MessageType::Error));
+      $messagePresenter->addMessage(new Message("Nie udało się zapisać paragonu do bazy :(\n", MessageType::Error));
     }
     if(!$savedSuccessfully) {
       $messagePresenter->addMessage(new Message("Nie udało się zapisać paragonu do bazy :(", MessageType::Error));
