@@ -31,7 +31,7 @@ function truncateStringValueTo2Decimal(num) {
     dotPos = commaPos;
   }
   if(dotPos === -1) {
-    return num;
+    return num + '00'; // evil js
   }
 
   if(num.substring(dotPos).length > 3) {
@@ -57,7 +57,6 @@ function updateReceipt(attribute, value) {
       const output = document.querySelector('pre');
 
       if(attribute == 'saveToDatabase') {
-        console.log(httpRequest.responseText);
         window.location='./';
       }
       downloadReceiptJSON();
@@ -75,24 +74,14 @@ function updateReceiptPrice(input) {
   updateReceipt('newPrice', convertToGrosz(input.value));
 }
 
+function updateItemName(itemID, newName) {
+  const operationData = `${itemID};${newName}`;
+  updateReceipt('setItemName', operationData);
+}
+
 function updateItemPrice(itemID, newPrice) {
   const operationData = `${itemID};${newPrice}`;
   updateReceipt('setItemPrice', operationData);
-}
-
-function findUsers(name) {
-  let httpRequest = new XMLHttpRequest();
-  httpRequest.onreadystatechange = () => {
-    if(httpRequest.readyState == 4 && httpRequest.status == 200) {
-      let userList = JSON.parse(httpRequest.responseText);
-
-      if(userList.length === 1) {
-        updateReceipt('newParticipant', userList[0]);
-      }
-    }
-  }
-  httpRequest.open("GET", `searchUsers.php?name=${name}`, true);
-  httpRequest.send();
 }
 
 function addPersonToList(textInput) {
@@ -100,8 +89,6 @@ function addPersonToList(textInput) {
     return;
   }
   updateReceipt('newParticipant', textInput.value);
-  //findUsers(textInput.value);
-  let tablePersonList = document.querySelector('#table-person-list');
   textInput.value = ''
 }
 
@@ -123,9 +110,8 @@ function downloadReceiptJSON() {
   httpRequest.onreadystatechange = () => {
     if(httpRequest.readyState == 4 && httpRequest.status == 200) {
       receipt = JSON.parse(httpRequest.responseText);
-      console.log(receipt);
 
-      updateInfoPrice();
+      updateDate();
       updateDescription();
       updateItemTable();
       updatePersonTable();
@@ -137,9 +123,16 @@ function downloadReceiptJSON() {
   httpRequest.send();
 }
 
-function updateInfoPrice() {
-  const priceInput = document.querySelector('#form-receipt-price');
-  const serverReceiptPrice = convertToPLN(receipt.price);
+function updateDate() {
+  const dateString = receipt.date.date;
+
+  const localDate = new Date(dateString + 'Z');
+  const year = localDate.getFullYear();
+  const month = String(localDate.getMonth() + 1).padStart(2, '0');
+  const day = String(localDate.getDate()).padStart(2, '0');
+
+  const formDate = document.querySelector("#form-receipt-date");
+  formDate.value = `${year}-${month}-${day}`;
 }
 
 function updateDescription() {
@@ -167,10 +160,11 @@ function updateItemTable() {
     const nameCell = newRow.insertCell();
     nameCell.innerHTML = item.name;
     nameCell.contentEditable = true;
-    nameCell.addEventListener("input", (event) => {
-      console.log(`Yo: ${event}`);
-      console.log(event);
-
+    nameCell.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        updateItemName(i, nameCell.innerText);
+      }
     }, false);
 
     const priceCell = newRow.insertCell();
@@ -180,10 +174,10 @@ function updateItemTable() {
     priceCell.contentEditable = true;
     priceCell.addEventListener('keydown', function(event) {
       if (event.key === 'Enter') {
-          event.preventDefault();
-          let newPrice = this.innerText.replace(/[^\d.]/g, '');
-          newPrice = truncateStringValueTo2Decimal(newPrice).replace('.', '');
-          updateItemPrice(i, newPrice);
+        event.preventDefault();
+        let newPrice = this.innerText.replace(/[^\d.]/g, '');
+        newPrice = truncateStringValueTo2Decimal(newPrice).replace('.', '');
+        updateItemPrice(i, newPrice);
       }
     });
 

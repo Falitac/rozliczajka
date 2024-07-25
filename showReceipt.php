@@ -60,7 +60,6 @@
   <title>Rozliczajka</title>
   <link href="css/main.css" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="/img/favicon2.ico">
-  <script type="text/javascript" src="js/qrcode.min.js"></script>
 </head>
 <body>
   <main>

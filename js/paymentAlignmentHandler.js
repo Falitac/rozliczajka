@@ -1,3 +1,4 @@
+
 function parseKeyTextValue(text, key) {
   const stringLocation = text.search(key) + key.length;
   const numberEndLocation = text.search('\n', stringLocation);

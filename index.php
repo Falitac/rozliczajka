@@ -105,10 +105,10 @@
           <h1>Paragony</h1>
           <div class="container-receipt-list">
             <div>
-              <?php require_once('receiptTable.php');?>
+              <?php $receiptTableForUser=false; require('receiptTable.php');?>
             </div>
             <div>
-              <?php require_once('userReceiptTable.php');?>
+              <?php $receiptTableForUser=true; require('receiptTable.php');?>
             </div>
           </div>
         </div>

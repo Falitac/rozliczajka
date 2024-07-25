@@ -291,6 +291,12 @@ a:hover {
   flex-wrap: wrap;
 }
 
+td.description-text {
+  max-width: 180px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 
 /*
  * Table format

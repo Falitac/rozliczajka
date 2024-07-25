@@ -47,8 +47,6 @@ keyboardElementSwitch: event => {
   }
 
   let nextIndex = 0;
-  if(currentSelectedIndex === null) {
-  }
 
   let requestToChange = false;
   if(goUpKeys.includes(event.keyCode)) {
@@ -74,7 +72,6 @@ keyboardElementSwitch: event => {
     Autocomplete.removeSuggestions(input);
   }
   if(event.keyCode === 13) {
-    console.log(`Index: ${nextIndex}`);
     input.value = suggestions[currentSelectedIndex].innerHTML;
   }
 },

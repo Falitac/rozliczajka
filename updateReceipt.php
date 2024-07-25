@@ -100,6 +100,15 @@ function updateItemInfo($newReceipt) {
   if(isset($_GET['removeItem'])) {
     $newReceipt->removeItem($_GET['removeItem']);
   }
+  if(isset($_GET['setItemName'])) {
+    $data = explode(';', $_GET['setItemName']);
+    if(count($data) !== 2) {
+      return;
+    }
+
+    $item = &$newReceipt->getItem($data[0]);
+    $item->setName($data[1]);
+  }
   if(isset($_GET['setItemPrice'])) {
     $data = explode(';', $_GET['setItemPrice']);
     if(count($data) !== 2) {
@@ -123,10 +132,15 @@ function performOCR($receipt) {
   echo "File exists, performing OCR<br>";
   $ocrResult = receiptOCR($filename);
   $items = $ocrResult->receipts[0]->items;
+  $receipt->date = new DateTime($ocrResult->receipts[0]->date);
   echo "<pre>";
   foreach($items as $item) {
     $itemName = htmlspecialchars($item->description);
     $itemPrice = $item->amount * 100;
+    if($itemName === "SUMA PLN") {
+      $receipt->setPrice($itemPrice);
+      continue;
+    }
 
     $newItem = new Item($itemName, $itemPrice);
     $newItem->addEveryoneFromReceipt($receipt);
@@ -136,7 +150,7 @@ function performOCR($receipt) {
 }
 
 function receiptOCR($imageFile) {
-  $receiptOcrEndpoint = 'https://ocr.asprise.com/api/v1/receipt'; //
+  $receiptOcrEndpoint = 'https://ocr.asprise.com/api/v1/receipt';
 
   $ch = curl_init();
   curl_setopt($ch, CURLOPT_URL, $receiptOcrEndpoint);
@@ -154,6 +168,9 @@ function receiptOCR($imageFile) {
   if(curl_errno($ch)){
       throw new Exception(curl_error($ch));
   }
+  echo "<pre>";
+  echo $result;
+  echo "</pre>";
 
   return json_decode($result);
 }

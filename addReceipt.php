@@ -26,7 +26,6 @@
   <title>Rozliczajka</title>
   <link href="css/main.css" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="/img/favicon2.ico">
-  <script type="text/javascript" src="js/qrcode.min.js"></script>
 </head>
 <body>
   <main>
@@ -43,13 +42,13 @@
                 <label>
                   <h2>Kwota:</h2>
                 </label>
-                <input type="number" id="form-receipt-price" inputmode="decimal" value="<?=$newReceipt->getPrice()/100?>" oninput="onNumberChange(this);updateReceiptPrice(this)" onclick="this.select();"></input>
+                <input type="number" id="form-receipt-price" inputmode="decimal" value="<?=$newReceipt->getPrice()/100?>" onblur="onNumberChange(this);updateReceiptPrice(this)" onclick="this.select();"></input>
               </div>
               <div class="receipt-date-item">
                 <label>
                   <h2>Data:</h2>
                 </label>
-                <input type="date" id="form-receipt-date" oninput="updateReceipt('newDate', this.value)"></input>
+                <input type="date" id="form-receipt-date" onblur="updateReceipt('newDate', this.value)"></input>
               </div>
             </div>
             <label>
@@ -110,7 +109,6 @@
         </div>
         <input id="submit-save-receipt" type="submit" value="Zapisz w bazie" onclick="receiptSubmitToDatabase(this);">
       </div>
-      <!--<div id="qrcode">-->
       <pre id="php-output">
       </pre>
     </div>
