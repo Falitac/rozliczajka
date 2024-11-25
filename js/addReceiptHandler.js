@@ -28,10 +28,11 @@ function truncateStringValueTo2Decimal(num) {
   let commaPos = num.indexOf(',');
   
   if(dotPos === -1) {
+    // Treat ',' as '.'
     dotPos = commaPos;
   }
   if(dotPos === -1) {
-    return num + '00'; // evil js
+    return num;
   }
 
   if(num.substring(dotPos).length > 3) {

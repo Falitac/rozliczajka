@@ -56,14 +56,15 @@ function updateReceipt() {
     }
     if(!$savedSuccessfully) {
       $messagePresenter->addMessage(new Message("Nie udało się zapisać paragonu do bazy :(", MessageType::Error));
-    } else { // should not be an error but we'll change it soon
+    } else {
       $messagePresenter->addMessage(new Message("Paragon zapisany", MessageType::Info));
+      unset($_SESSION['new-receipt']);
     }
     $_SESSION['main-message-presenter'] = serialize($messagePresenter);
+    return;
   }
 
   $newReceipt->calculateShares();
-  print_r($newReceipt);
   $_SESSION['new-receipt'] = serialize($newReceipt);
 }
 
